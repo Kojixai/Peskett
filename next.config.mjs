@@ -1,7 +1,7 @@
 
 
 const nextConfig = {
-  basePath: '/peskett',
+  basePath: process.env.NEXT_PUBLIC_BASE_PATH || '',
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '**.supabase.co' },

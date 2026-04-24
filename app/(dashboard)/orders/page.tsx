@@ -1,16 +1,28 @@
 import { createClient } from '@/lib/supabase/server'
 import { Badge } from '@/components/ui/badge'
 import { formatCurrency, formatDate } from '@/lib/utils'
+import { demoOrders, demoInventory } from '@/lib/demo-data'
 
 export const dynamic = 'force-dynamic'
 
 export default async function OrdersPage() {
-  const supabase = await createClient()
+  const isDemo = process.env.DEMO_MODE === 'true'
+  let orders: any[]
 
-  const { data: orders } = await supabase
-    .from('orders')
-    .select('*, inventory_items(sku, brand, description, photos), listings(list_price, platform)')
-    .order('sold_at', { ascending: false })
+  if (isDemo) {
+    orders = demoOrders.map((o) => ({
+      ...o,
+      inventory_items: demoInventory.find((i) => i.id === o.sku_id) ?? null,
+      listings: { list_price: o.sale_price * 1.1, platform: 'vinted' },
+    }))
+  } else {
+    const supabase = await createClient()
+    const { data } = await supabase
+      .from('orders')
+      .select('*, inventory_items(sku, brand, description, photos), listings(list_price, platform)')
+      .order('sold_at', { ascending: false })
+    orders = data ?? []
+  }
 
   const totalRevenue = orders?.reduce((s, o) => s + (o.sale_price ?? 0), 0) ?? 0
   const totalProfit = orders?.reduce((s, o) => s + (o.profit ?? 0), 0) ?? 0

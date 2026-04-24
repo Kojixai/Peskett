@@ -1,6 +1,8 @@
 'use client'
 
-import { useState, useRef, useCallback, useEffect } from 'react'
+export const dynamic = 'force-dynamic'
+
+import { useState, useRef, useCallback, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Input, Select, Textarea } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -34,6 +36,14 @@ const CATEGORIES = [
 ]
 
 export default function NewListingPage() {
+  return (
+    <Suspense fallback={<div className="p-6 text-zinc-500 text-sm">Loading...</div>}>
+      <NewListingPageContent />
+    </Suspense>
+  )
+}
+
+function NewListingPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const preselectedSkuId = searchParams.get('sku')

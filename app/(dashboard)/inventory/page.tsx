@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import Link from 'next/link'
 import Image from 'next/image'
+import { demoInventory } from '@/lib/demo-data'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,24 +13,39 @@ export default async function InventoryPage({
   searchParams: Promise<{ status?: string; q?: string; category?: string }>
 }) {
   const params = await searchParams
-  const supabase = await createClient()
+  const isDemo = process.env.DEMO_MODE === 'true'
 
-  let query = supabase
-    .from('inventory_items')
-    .select('*')
-    .order('created_at', { ascending: false })
+  let items: any[] = []
 
-  if (params.status && params.status !== 'all') {
-    query = query.eq('status', params.status)
-  }
-  if (params.q) {
-    query = query.or(`brand.ilike.%${params.q}%,description.ilike.%${params.q}%,sku.ilike.%${params.q}%`)
-  }
-  if (params.category) {
-    query = query.ilike('category', `%${params.category}%`)
-  }
+  if (isDemo) {
+    items = demoInventory.filter((i) => {
+      if (params.status && params.status !== 'all' && i.status !== params.status) return false
+      if (params.q) {
+        const q = params.q.toLowerCase()
+        if (!i.brand?.toLowerCase().includes(q) && !i.description?.toLowerCase().includes(q) && !i.sku.includes(q)) return false
+      }
+      return true
+    })
+  } else {
+    const supabase = await createClient()
+    let query = supabase
+      .from('inventory_items')
+      .select('*')
+      .order('created_at', { ascending: false })
 
-  const { data: items } = await query
+    if (params.status && params.status !== 'all') {
+      query = query.eq('status', params.status)
+    }
+    if (params.q) {
+      query = query.or(`brand.ilike.%${params.q}%,description.ilike.%${params.q}%,sku.ilike.%${params.q}%`)
+    }
+    if (params.category) {
+      query = query.ilike('category', `%${params.category}%`)
+    }
+
+    const { data } = await query
+    items = data ?? []
+  }
 
   const statuses = [
     { value: 'all', label: 'All' },

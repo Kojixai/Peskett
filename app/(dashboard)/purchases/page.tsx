@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
+import { demoPurchases, demoInventory } from '@/lib/demo-data'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,12 +14,22 @@ const sourceLabels: Record<string, string> = {
 }
 
 export default async function PurchasesPage() {
-  const supabase = await createClient()
+  const isDemo = process.env.DEMO_MODE === 'true'
+  let purchases: any[]
 
-  const { data: purchases } = await supabase
-    .from('purchases')
-    .select('*, inventory_items(id)')
-    .order('purchase_date', { ascending: false })
+  if (isDemo) {
+    purchases = demoPurchases.map((p) => ({
+      ...p,
+      inventory_items: demoInventory.filter((i) => i.purchase_id === p.id),
+    }))
+  } else {
+    const supabase = await createClient()
+    const { data } = await supabase
+      .from('purchases')
+      .select('*, inventory_items(id)')
+      .order('purchase_date', { ascending: false })
+    purchases = data ?? []
+  }
 
   return (
     <div className="p-6 space-y-5">
