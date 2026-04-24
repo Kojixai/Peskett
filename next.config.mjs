@@ -1,6 +1,7 @@
 
 
 const nextConfig = {
+  basePath: '/peskett',
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '**.supabase.co' },
@@ -11,6 +12,7 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ['@anthropic-ai/sdk'],
   },
+  output: 'standalone',
 }
 
 export default nextConfig
