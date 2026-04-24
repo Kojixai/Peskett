@@ -77,12 +77,12 @@ export default async function DashboardPage() {
   const d = isDemo ? await getDemoData() : await getLiveData()
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 md:p-6 space-y-5 md:space-y-6">
       {/* Demo banner */}
       {isDemo && (
-        <div className="border border-[#f97316]/40 bg-[#431407]/20 px-4 py-2.5 flex items-center justify-between">
-          <span className="text-sm text-[#f97316] font-mono">DEMO MODE — sample data only</span>
-          <span className="text-xs text-zinc-500">Add your API keys in .env.local to go live</span>
+        <div className="border border-[#f97316]/40 bg-[#431407]/20 px-4 py-2.5 flex items-center justify-between gap-3">
+          <span className="text-sm text-[#f97316] font-mono">DEMO MODE</span>
+          <span className="text-xs text-zinc-500 hidden sm:block">Add your API keys in .env.local to go live</span>
         </div>
       )}
 
@@ -95,7 +95,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* KPI grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
         <KpiCard label="Revenue (month)" value={formatCurrency(d.monthRevenue)} sub={`All time: ${formatCurrency(d.totalRevenue)}`} accent />
         <KpiCard label="Profit (month)" value={formatCurrency(d.monthProfit)} sub={`All time: ${formatCurrency(d.totalProfit)}`} trend={d.monthProfit > 0 ? 'up' : 'down'} />
         <KpiCard label="Avg Margin" value={formatPercent(d.avgMargin)} sub={`${d.itemsSold} items sold`} />
@@ -146,9 +146,9 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* P&L table */}
+      {/* P&L table — desktop only */}
       {d.recentOrders.length > 0 && (
-        <div className="bg-[#111113] border border-[#27272a]">
+        <div className="hidden md:block bg-[#111113] border border-[#27272a]">
           <div className="px-4 py-3 border-b border-[#27272a] flex items-center justify-between">
             <div className="text-xs text-zinc-500 uppercase tracking-widest">P&amp;L Breakdown</div>
             <Link href="/orders" className="text-xs text-[#f97316] hover:text-[#ea6c0a]">All orders →</Link>

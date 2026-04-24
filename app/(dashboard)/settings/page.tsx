@@ -121,7 +121,7 @@ export default function SettingsPage() {
               placeholder="e.g. Default Rule"
               required
             />
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <Input
                 label="Accept if ≥ (%)"
                 type="number"

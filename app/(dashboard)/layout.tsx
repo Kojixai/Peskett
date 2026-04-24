@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { Sidebar } from '@/components/layout/sidebar'
+import { NavLayout } from '@/components/layout/nav-layout'
 
 function isSupabaseConfigured(): boolean {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -23,12 +23,5 @@ export default async function DashboardLayout({ children }: { children: React.Re
     if (!user) redirect('/auth/login')
   }
 
-  return (
-    <div className="flex h-screen bg-[#09090b] overflow-hidden">
-      <Sidebar />
-      <main className="flex-1 overflow-y-auto">
-        {children}
-      </main>
-    </div>
-  )
+  return <NavLayout>{children}</NavLayout>
 }

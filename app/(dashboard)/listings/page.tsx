@@ -5,13 +5,24 @@ import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
-export default async function ListingsPage() {
-  const supabase = await createClient()
+function isSupabaseConfigured(): boolean {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  return !!(url && key && !url.includes('placeholder') && key.length > 50)
+}
 
-  const { data: listings } = await supabase
-    .from('listings')
-    .select('*, inventory_items(sku, brand, description, photos)')
-    .order('created_at', { ascending: false })
+export default async function ListingsPage() {
+  const isDemo = process.env.DEMO_MODE === 'true' || !isSupabaseConfigured()
+  let listings: any[] = []
+
+  if (!isDemo) {
+    const supabase = await createClient()
+    const { data } = await supabase
+      .from('listings')
+      .select('*, inventory_items(sku, brand, description, photos)')
+      .order('created_at', { ascending: false })
+    listings = data ?? []
+  }
 
   const grouped = {
     live: listings?.filter((l) => l.status === 'live') ?? [],
@@ -21,7 +32,7 @@ export default async function ListingsPage() {
   }
 
   return (
-    <div className="p-6 space-y-5">
+    <div className="p-4 md:p-6 space-y-5">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-lg font-semibold text-zinc-100 uppercase tracking-widest">Listings</h1>
@@ -35,7 +46,7 @@ export default async function ListingsPage() {
         </Link>
       </div>
 
-      {/* Status tabs */}
+      {/* Status sections */}
       {Object.entries(grouped).map(([status, items]) =>
         items.length > 0 ? (
           <div key={status} className="bg-[#111113] border border-[#27272a]">
@@ -43,7 +54,48 @@ export default async function ListingsPage() {
               <span className="text-xs text-zinc-500 uppercase tracking-widest">{status}</span>
               <Badge status={status}>{items.length}</Badge>
             </div>
-            <div className="overflow-x-auto">
+
+            {/* Mobile card view */}
+            <div className="divide-y divide-[#1e1e22] md:hidden">
+              {items.map((listing: any) => {
+                const item = listing.inventory_items
+                return (
+                  <div key={listing.id} className="p-4 space-y-2">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="font-mono text-xs text-zinc-500">{item?.sku ?? '—'}</div>
+                        <div className="text-sm text-zinc-200 truncate mt-0.5">
+                          {item?.brand && <span className="font-medium">{item.brand} </span>}
+                          {item?.description}
+                        </div>
+                      </div>
+                      <div className="font-mono text-sm text-zinc-100 flex-shrink-0">
+                        {formatCurrency(listing.list_price)}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Badge variant="muted">{listing.platform}</Badge>
+                      <span className="text-xs text-zinc-600">
+                        {listing.scheduled_at
+                          ? formatDateTime(listing.scheduled_at)
+                          : listing.listed_at
+                          ? formatDateTime(listing.listed_at)
+                          : '—'}
+                      </span>
+                    </div>
+                    <Link
+                      href={`/inventory/${listing.sku_id}`}
+                      className="text-xs text-zinc-500 hover:text-zinc-300"
+                    >
+                      View item →
+                    </Link>
+                  </div>
+                )
+              })}
+            </div>
+
+            {/* Desktop table view */}
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-[#1e1e22]">

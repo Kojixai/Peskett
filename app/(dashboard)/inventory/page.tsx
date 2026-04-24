@@ -57,7 +57,7 @@ export default async function InventoryPage({
   const activeStatus = params.status ?? 'all'
 
   return (
-    <div className="p-6 space-y-5">
+    <div className="p-4 md:p-6 space-y-5">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -67,7 +67,7 @@ export default async function InventoryPage({
         <div className="flex items-center gap-2">
           <Link
             href="/purchases/new"
-            className="inline-flex items-center gap-2 bg-[#18181b] hover:bg-[#27272a] border border-[#27272a] text-zinc-300 text-xs font-semibold uppercase tracking-widest px-3 py-2 transition-colors"
+            className="hidden sm:inline-flex items-center gap-2 bg-[#18181b] hover:bg-[#27272a] border border-[#27272a] text-zinc-300 text-xs font-semibold uppercase tracking-widest px-3 py-2 transition-colors"
           >
             Log Purchase
           </Link>
@@ -81,7 +81,7 @@ export default async function InventoryPage({
       </div>
 
       {/* Filters */}
-      <div className="flex items-center gap-3 flex-wrap">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
         {/* Status filter */}
         <div className="flex">
           {statuses.map((s) => (
@@ -100,21 +100,21 @@ export default async function InventoryPage({
         </div>
 
         {/* Search */}
-        <form method="get" action="/inventory" className="flex">
+        <form method="get" action="/inventory" className="flex w-full sm:w-auto">
           <input
             type="hidden" name="status" value={activeStatus}
           />
           <input
             name="q"
             defaultValue={params.q ?? ''}
-            placeholder="Search SKU, brand, description..."
-            className="bg-[#111113] border border-[#27272a] px-3 py-1.5 text-sm text-zinc-100 placeholder-zinc-600 w-64 focus:outline-none focus:border-[#f97316] transition-colors"
+            placeholder="Search SKU, brand..."
+            className="bg-[#111113] border border-[#27272a] px-3 py-1.5 text-sm text-zinc-100 placeholder-zinc-600 flex-1 sm:w-56 focus:outline-none focus:border-[#f97316] transition-colors"
           />
           <button
             type="submit"
             className="bg-[#18181b] border border-l-0 border-[#27272a] px-3 py-1.5 text-xs text-zinc-400 hover:text-zinc-200 uppercase tracking-widest transition-colors"
           >
-            Search
+            Go
           </button>
         </form>
       </div>
@@ -176,7 +176,7 @@ export default async function InventoryPage({
                   </span>
                 </div>
                 {item.storage_location && (
-                  <div className="font-mono text-xs text-zinc-600 bg-[#18181b] px-2 py-1">
+                  <div className="font-mono text-xs text-zinc-600 bg-[#18181b] px-2 py-1 truncate">
                     📦 {item.storage_location}
                   </div>
                 )}
