@@ -12,7 +12,6 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ['@anthropic-ai/sdk'],
   },
-  output: 'standalone',
 }
 
 export default nextConfig
