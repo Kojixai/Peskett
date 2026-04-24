@@ -13,7 +13,7 @@ export default async function InventoryPage({
   searchParams: Promise<{ status?: string; q?: string; category?: string }>
 }) {
   const params = await searchParams
-  const isDemo = process.env.DEMO_MODE === 'true'
+  const isDemo = process.env.DEMO_MODE === 'true' || !process.env.NEXT_PUBLIC_SUPABASE_URL?.includes('supabase.co') || process.env.NEXT_PUBLIC_SUPABASE_URL?.includes('placeholder')
 
   let items: any[] = []
 

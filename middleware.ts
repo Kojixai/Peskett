@@ -1,9 +1,21 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+function isSupabaseConfigured(): boolean {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  return !!(
+    url &&
+    key &&
+    url !== 'https://placeholder.supabase.co' &&
+    !url.includes('placeholder') &&
+    key.length > 50
+  )
+}
+
 export async function middleware(request: NextRequest) {
-  // Demo mode: bypass all auth checks
-  if (process.env.DEMO_MODE === 'true') {
+  // Pass through if demo mode is on or Supabase isn't configured
+  if (process.env.DEMO_MODE === 'true' || !isSupabaseConfigured()) {
     return NextResponse.next({ request })
   }
 
@@ -34,12 +46,10 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl
 
-  // Allow auth routes through
   if (pathname.startsWith('/auth') || pathname.startsWith('/api/webhooks')) {
     return supabaseResponse
   }
 
-  // Redirect unauthenticated users to login
   if (!user && !pathname.startsWith('/auth')) {
     const url = request.nextUrl.clone()
     url.pathname = '/auth/login'

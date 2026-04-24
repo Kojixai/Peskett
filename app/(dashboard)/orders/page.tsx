@@ -6,7 +6,7 @@ import { demoOrders, demoInventory } from '@/lib/demo-data'
 export const dynamic = 'force-dynamic'
 
 export default async function OrdersPage() {
-  const isDemo = process.env.DEMO_MODE === 'true'
+  const isDemo = process.env.DEMO_MODE === 'true' || !process.env.NEXT_PUBLIC_SUPABASE_URL?.includes('supabase.co') || !!process.env.NEXT_PUBLIC_SUPABASE_URL?.includes('placeholder')
   let orders: any[]
 
   if (isDemo) {

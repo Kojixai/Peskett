@@ -64,8 +64,14 @@ async function getDemoData() {
   return { ...kpis, recentOrders, chartData, starlingBalance: { balance: 1842.50, currency: 'GBP' } }
 }
 
+function isSupabaseConfigured() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  return !!(url && key && !url.includes('placeholder') && key.length > 50)
+}
+
 export default async function DashboardPage() {
-  const isDemo = process.env.DEMO_MODE === 'true'
+  const isDemo = process.env.DEMO_MODE === 'true' || !isSupabaseConfigured()
   const now = new Date()
 
   const d = isDemo ? await getDemoData() : await getLiveData()

@@ -14,7 +14,7 @@ const sourceLabels: Record<string, string> = {
 }
 
 export default async function PurchasesPage() {
-  const isDemo = process.env.DEMO_MODE === 'true'
+  const isDemo = process.env.DEMO_MODE === 'true' || !process.env.NEXT_PUBLIC_SUPABASE_URL?.includes('supabase.co') || !!process.env.NEXT_PUBLIC_SUPABASE_URL?.includes('placeholder')
   let purchases: any[]
 
   if (isDemo) {
