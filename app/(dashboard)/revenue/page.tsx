@@ -117,7 +117,7 @@ export default async function RevenuePage({
               ← Dashboard
             </Link>
           </div>
-          <h1 className="text-xl font-bold text-[var(--text)] mt-1">Revenue</h1>
+          <h1 className="text-lg font-semibold text-[var(--text)] uppercase tracking-widest mt-1">Revenue</h1>
           <p className="text-xs text-[var(--text-muted)] mt-0.5">{periodLabel}</p>
         </div>
 

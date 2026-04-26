@@ -57,7 +57,7 @@ export default function SettingsPage() {
   return (
     <div className="p-4 md:p-6 space-y-6">
       <div>
-        <h1 className="text-xl font-bold text-[var(--text)]">Settings</h1>
+        <h1 className="text-lg font-semibold text-[var(--text)] uppercase tracking-widest">Settings</h1>
         <p className="text-xs text-[var(--text-muted)] mt-0.5">Appearance, offer rules and configuration</p>
       </div>
 

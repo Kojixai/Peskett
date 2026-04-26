@@ -156,7 +156,7 @@ export default async function DashboardPage() {
     <div className="p-4 md:p-6 space-y-4 md:space-y-5">
       {/* Header */}
       <div>
-        <h1 className="text-xl font-bold text-[var(--text)]">Dashboard</h1>
+        <h1 className="text-lg font-semibold text-[var(--text)] uppercase tracking-widest">Dashboard</h1>
         <p className="text-xs text-[var(--text-muted)] mt-0.5">{format(now, 'EEEE, d MMMM yyyy')}</p>
       </div>
 

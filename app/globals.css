@@ -65,3 +65,8 @@ table { border-collapse: collapse; width: 100%; }
   background: var(--accent);
   color: #fff;
 }
+
+/* Ensure Familjen Grotesk applies to SVG text (Recharts) */
+svg text, tspan {
+  font-family: 'Familjen Grotesk', system-ui, sans-serif !important;
+}
