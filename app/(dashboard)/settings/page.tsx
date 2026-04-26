@@ -224,8 +224,29 @@ export default function SettingsPage() {
 
 const CHANGELOG = [
   {
+    version: 'v0.6',
+    date: '26 Apr 2026 · 17:35',
+    changes: [
+      'Standardised all page titles to same style (uppercase, semibold, text-lg)',
+      'Familjen Grotesk now applies inside the chart (SVG text nodes)',
+      'Bottom nav inverted: dark background on light mode, light on dark mode',
+    ],
+  },
+  {
+    version: 'v0.5',
+    date: '26 Apr 2026 · 15:00',
+    changes: [
+      'Familjen Grotesk replaces Poppins and JetBrains Mono site-wide',
+      'Revenue chart: Today / Week / Month / Year date-range selector',
+      'vs Last Month KPI card showing revenue percentage change',
+      'KPI cards now link to relevant pages (Revenue, Orders, Inventory)',
+      'New /revenue page: monthly breakdown with COGS, fees, VAT, order table',
+      'All pages standardised to same padding (p-4 md:p-6)',
+    ],
+  },
+  {
     version: 'v0.4',
-    date: '26 Apr 2025 · 20:30',
+    date: '26 Apr 2026 · 11:00',
     changes: [
       'Replaced top/side navbar with fixed bottom nav (Dashboard, Inventory, Purchases, Orders, Settings)',
       'Removed demo banner, page title and date from dashboard for cleaner mobile view',
@@ -236,18 +257,17 @@ const CHANGELOG = [
   },
   {
     version: 'v0.3',
-    date: '26 Apr 2025 · 18:00',
+    date: '25 Apr 2026 · 20:00',
     changes: [
       'Full light/dark theme system with CSS variables and localStorage persistence',
       'Pastel KPI cards with 3-column grid on mobile, 4 on desktop',
       'Revenue chart moved to top of dashboard, halved in height',
-      'Poppins font + JetBrains Mono for data',
       'Icon-only dark sidebar for desktop',
     ],
   },
   {
     version: 'v0.2',
-    date: '26 Apr 2025 · 14:00',
+    date: '25 Apr 2026 · 14:00',
     changes: [
       'Mobile-responsive layouts with card/table dual-render pattern',
       'Inventory, Purchases and Orders pages all responsive',
@@ -256,7 +276,7 @@ const CHANGELOG = [
   },
   {
     version: 'v0.1',
-    date: '25 Apr 2025',
+    date: '25 Apr 2026',
     changes: [
       'Initial dashboard with KPI cards, revenue chart and P&L table',
       'Inventory, Purchases, Orders, Listings and Settings pages',

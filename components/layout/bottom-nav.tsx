@@ -16,7 +16,7 @@ export function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 inset-x-0 z-50 md:hidden bg-[var(--bg-card)] border-t border-[var(--border)]"
+      className="fixed bottom-0 inset-x-0 z-50 md:hidden bg-[#1e2235] dark:bg-white border-t border-white/10 dark:border-[#e2e8f5]"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       <div className="flex h-16">
@@ -27,7 +27,9 @@ export function BottomNav() {
               key={href}
               href={href}
               className={`flex-1 flex flex-col items-center justify-center gap-0.5 transition-colors ${
-                active ? 'text-[#f97316]' : 'text-[var(--text-subtle)] hover:text-[var(--text-muted)]'
+                active
+                  ? 'text-[#f97316]'
+                  : 'text-white/40 dark:text-[#1a2234]/40 hover:text-white/75 dark:hover:text-[#1a2234]/70'
               }`}
             >
               <Icon className="w-5 h-5" />
