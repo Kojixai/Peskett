@@ -1,9 +1,9 @@
 import { KpiCard } from '@/components/dashboard/kpi-card'
 import { RevenueChart } from '@/components/dashboard/revenue-chart'
 import { formatCurrency, formatPercent } from '@/lib/utils'
-import type { RevenueDataPoint } from '@/lib/types'
+import type { ChartRanges } from '@/lib/types'
 import Link from 'next/link'
-import { format, startOfMonth } from 'date-fns'
+import { format, startOfMonth, startOfDay, endOfDay, subDays, subMonths, startOfMonth as startOfM, endOfMonth } from 'date-fns'
 
 export const dynamic = 'force-dynamic'
 
@@ -37,31 +37,78 @@ async function getLiveData() {
   const liveListings = stockItems?.filter((i) => i.status === 'listed').length ?? 0
   const stockValue = stockItems?.reduce((s, i) => s + (i.cost_price ?? 0), 0) ?? 0
 
-  const chartData: RevenueDataPoint[] = Array.from({ length: 8 }, (_, i) => {
-    const weekEnd = new Date(now)
-    weekEnd.setDate(weekEnd.getDate() - i * 7)
-    const weekStart = new Date(weekEnd)
-    weekStart.setDate(weekStart.getDate() - 6)
-    const weekOrders = allOrders?.filter((o) => { const d = new Date(o.sold_at); return d >= weekStart && d <= weekEnd }) ?? []
+  // Last month comparison
+  const lastMonthStart = startOfMonth(subMonths(now, 1))
+  const lastMonthEnd = endOfMonth(subMonths(now, 1))
+  const lastMonthOrdersData = allOrders?.filter(o => {
+    const d = new Date(o.sold_at)
+    return d >= lastMonthStart && d <= lastMonthEnd
+  }) ?? []
+  const lastMonthRevenue = lastMonthOrdersData.reduce((s, o) => s + (o.sale_price ?? 0), 0)
+  const lastMonthProfit = lastMonthOrdersData.reduce((s, o) => s + (o.profit ?? 0), 0)
+
+  // Chart ranges
+  const todayStart = startOfDay(now)
+  const currentHour = now.getHours()
+  const today = Array.from({ length: currentHour + 1 }, (_, h) => {
+    const hourOrders = allOrders?.filter(o => {
+      const d = new Date(o.sold_at)
+      return d >= todayStart && d.getHours() === h
+    }) ?? []
     return {
-      period: format(weekEnd, 'dd MMM'),
-      revenue: weekOrders.reduce((s, o) => s + (o.sale_price ?? 0), 0),
-      profit: weekOrders.reduce((s, o) => s + (o.profit ?? 0), 0),
+      period: `${String(h).padStart(2, '0')}:00`,
+      revenue: hourOrders.reduce((s, o) => s + (o.sale_price ?? 0), 0),
+      profit: hourOrders.reduce((s, o) => s + (o.profit ?? 0), 0),
+    }
+  })
+
+  const week = Array.from({ length: 7 }, (_, i) => {
+    const d = subDays(now, 6 - i)
+    const ds = startOfDay(d), de = endOfDay(d)
+    const dayOrders = allOrders?.filter(o => { const od = new Date(o.sold_at); return od >= ds && od <= de }) ?? []
+    return {
+      period: format(d, 'EEE'),
+      revenue: dayOrders.reduce((s, o) => s + (o.sale_price ?? 0), 0),
+      profit: dayOrders.reduce((s, o) => s + (o.profit ?? 0), 0),
+    }
+  })
+
+  const month = Array.from({ length: 4 }, (_, i) => {
+    const wkEnd = endOfDay(subDays(now, i * 7))
+    const wkStart = startOfDay(subDays(now, i * 7 + 6))
+    const wkOrders = allOrders?.filter(o => { const d = new Date(o.sold_at); return d >= wkStart && d <= wkEnd }) ?? []
+    return {
+      period: `Wk ${4 - i}`,
+      revenue: wkOrders.reduce((s, o) => s + (o.sale_price ?? 0), 0),
+      profit: wkOrders.reduce((s, o) => s + (o.profit ?? 0), 0),
     }
   }).reverse()
 
-  return { totalRevenue, totalProfit, monthRevenue, monthProfit, avgMargin, inStockCount, liveListings, stockValue, recentOrders: recentOrders ?? [], chartData, starlingBalance, itemsSold: allOrders?.length ?? 0, monthSold: monthOrders?.length ?? 0 }
+  const year = Array.from({ length: 12 }, (_, i) => {
+    const mDate = subMonths(now, 11 - i)
+    const ms = startOfM(mDate), me = endOfMonth(mDate)
+    const mOrders = allOrders?.filter(o => { const d = new Date(o.sold_at); return d >= ms && d <= me }) ?? []
+    return {
+      period: format(mDate, 'MMM'),
+      revenue: mOrders.reduce((s, o) => s + (o.sale_price ?? 0), 0),
+      profit: mOrders.reduce((s, o) => s + (o.profit ?? 0), 0),
+    }
+  })
+
+  const chartRanges: ChartRanges = { today, week, month, year }
+
+  return { totalRevenue, totalProfit, monthRevenue, monthProfit, avgMargin, inStockCount, liveListings, stockValue, recentOrders: recentOrders ?? [], chartRanges, starlingBalance, itemsSold: allOrders?.length ?? 0, monthSold: monthOrders?.length ?? 0, lastMonthRevenue, lastMonthProfit }
 }
 
 async function getDemoData() {
   const { getDemoKPIs, getDemoChartData, demoOrders, demoInventory } = await import('@/lib/demo-data')
   const kpis = getDemoKPIs()
-  const chartData = getDemoChartData()
+  const chartRanges = getDemoChartData()
   const recentOrders = demoOrders.map((o) => {
     const item = demoInventory.find((i) => i.id === o.sku_id) ?? null
     return { ...o, inventory_items: item, listings: { list_price: o.sale_price * 1.1 } }
   })
-  return { ...kpis, recentOrders, chartData, starlingBalance: { balance: 1842.50, currency: 'GBP' } }
+  return { ...kpis, recentOrders, chartRanges, starlingBalance: { balance: 1842.50, currency: 'GBP' } }
 }
 
 function isSupabaseConfigured() {
@@ -70,42 +117,53 @@ function isSupabaseConfigured() {
   return !!(url && key && !url.includes('placeholder') && key.length > 50)
 }
 
-// Pastel card colours — light bg / subtle dark variant
 const KPI_COLORS = [
-  'bg-orange-50  dark:bg-orange-950/25',   // Revenue
-  'bg-emerald-50 dark:bg-emerald-950/25',  // Profit
-  'bg-purple-50  dark:bg-purple-950/25',   // Avg Margin
-  'bg-blue-50    dark:bg-blue-950/25',     // Items Sold
-  'bg-rose-50    dark:bg-rose-950/25',     // In Stock
-  'bg-teal-50    dark:bg-teal-950/25',     // Cash Balance
-  'bg-amber-50   dark:bg-amber-950/25',    // Live Listings
-  'bg-violet-50  dark:bg-violet-950/25',   // Stock Value
+  'bg-orange-50  dark:bg-orange-950/25',
+  'bg-emerald-50 dark:bg-emerald-950/25',
+  'bg-purple-50  dark:bg-purple-950/25',
+  'bg-blue-50    dark:bg-blue-950/25',
+  'bg-rose-50    dark:bg-rose-950/25',
+  'bg-teal-50    dark:bg-teal-950/25',
+  'bg-amber-50   dark:bg-amber-950/25',
+  'bg-violet-50  dark:bg-violet-950/25',
+  'bg-sky-50     dark:bg-sky-950/25',
 ]
 
 export default async function DashboardPage() {
   const isDemo = process.env.DEMO_MODE === 'true' || !isSupabaseConfigured()
+  const now = new Date()
 
   const d = isDemo ? await getDemoData() : await getLiveData()
 
+  // vs last month
+  const revenueChange = d.lastMonthRevenue > 0
+    ? Math.round(((d.monthRevenue - d.lastMonthRevenue) / d.lastMonthRevenue) * 100)
+    : null
+
   const kpis = [
-    { label: 'Revenue (month)', value: formatCurrency(d.monthRevenue), sub: `All time: ${formatCurrency(d.totalRevenue)}`, accent: true },
-    { label: 'Profit (month)', value: formatCurrency(d.monthProfit), sub: `All time: ${formatCurrency(d.totalProfit)}`, trend: d.monthProfit > 0 ? 'up' : 'down' as const },
-    { label: 'Avg Margin', value: formatPercent(d.avgMargin), sub: `${d.itemsSold} items sold` },
-    { label: 'Items Sold', value: String(d.monthSold), sub: `${d.itemsSold} all time` },
-    { label: 'In Stock', value: String(d.inStockCount), sub: `Value: ${formatCurrency(d.stockValue)}` },
-    { label: 'Cash Balance', value: d.starlingBalance ? formatCurrency(d.starlingBalance.balance) : '—', sub: d.starlingBalance ? 'Starling Bank' : 'Connect Starling' },
-    { label: 'Live Listings', value: String(d.liveListings), sub: 'Currently on Vinted' },
-    { label: 'Stock Value', value: formatCurrency(d.stockValue), sub: 'Cost price basis' },
+    { label: 'Revenue (month)',  value: formatCurrency(d.monthRevenue),  sub: `All time: ${formatCurrency(d.totalRevenue)}`, accent: true, href: '/revenue' },
+    { label: 'Profit (month)',   value: formatCurrency(d.monthProfit),   sub: `All time: ${formatCurrency(d.totalProfit)}`, trend: d.monthProfit > 0 ? 'up' : 'down' as const, href: '/revenue' },
+    { label: 'vs Last Month',    value: revenueChange !== null ? `${revenueChange >= 0 ? '+' : ''}${revenueChange}%` : '—', sub: `Last month: ${formatCurrency(d.lastMonthRevenue)}`, trend: revenueChange !== null ? (revenueChange >= 0 ? 'up' : 'down') as 'up' | 'down' : undefined, href: '/revenue' },
+    { label: 'Avg Margin',       value: formatPercent(d.avgMargin),      sub: `${d.itemsSold} items sold`, href: '/orders' },
+    { label: 'Items Sold',       value: String(d.monthSold),             sub: `${d.itemsSold} all time`, href: '/orders' },
+    { label: 'In Stock',         value: String(d.inStockCount),          sub: `Value: ${formatCurrency(d.stockValue)}`, href: '/inventory' },
+    { label: 'Cash Balance',     value: d.starlingBalance ? formatCurrency(d.starlingBalance.balance) : '—', sub: d.starlingBalance ? 'Starling Bank' : 'Connect Starling' },
+    { label: 'Live Listings',    value: String(d.liveListings),          sub: 'Currently on Vinted', href: '/inventory?status=listed' },
+    { label: 'Stock Value',      value: formatCurrency(d.stockValue),    sub: 'Cost price basis', href: '/inventory' },
   ]
 
   return (
-    <div className="p-3 md:p-6 space-y-3 md:space-y-5">
-      {/* ── Chart ── */}
+    <div className="p-4 md:p-6 space-y-4 md:space-y-5">
+      {/* Header */}
       <div>
-        <RevenueChart data={d.chartData} />
+        <h1 className="text-xl font-bold text-[var(--text)]">Dashboard</h1>
+        <p className="text-xs text-[var(--text-muted)] mt-0.5">{format(now, 'EEEE, d MMMM yyyy')}</p>
       </div>
 
-      {/* ── KPI grid — 3 cols mobile, 4 cols md+ ── */}
+      {/* Chart */}
+      <RevenueChart ranges={d.chartRanges} />
+
+      {/* KPI grid — 3 cols mobile, 4 cols md+ */}
       <div className="grid grid-cols-3 md:grid-cols-4 gap-2 md:gap-3">
         {kpis.map((kpi, i) => (
           <KpiCard
@@ -116,6 +174,7 @@ export default async function DashboardPage() {
             trend={'trend' in kpi ? (kpi.trend as 'up' | 'down' | 'neutral') : undefined}
             accent={'accent' in kpi ? kpi.accent : false}
             color={KPI_COLORS[i]}
+            href={'href' in kpi ? kpi.href : undefined}
           />
         ))}
       </div>

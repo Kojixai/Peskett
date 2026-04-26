@@ -1,5 +1,5 @@
-import type { InventoryItem, Order, Listing, Purchase, RevenueDataPoint } from './types'
-import { format, subDays, subWeeks } from 'date-fns'
+import type { InventoryItem, Order, Listing, Purchase, RevenueDataPoint, ChartRanges } from './types'
+import { format, subDays, subMonths, startOfMonth, endOfMonth, startOfDay, endOfDay } from 'date-fns'
 
 const now = new Date()
 
@@ -34,27 +34,52 @@ export const demoPurchases: Purchase[] = [
   { id: 'p3', source: 'vinted', source_order_id: 'V-88812', purchase_date: subDays(now, 3).toISOString().split('T')[0], total_cost: 45, item_count: 3, notes: null, receipt_image_url: null, created_at: subDays(now, 3).toISOString() },
 ]
 
-export function getDemoChartData(): RevenueDataPoint[] {
-  return Array.from({ length: 8 }, (_, i) => {
-    const week = 7 - i
-    const base = 80 + Math.sin(i) * 30
-    const revenue = Math.round(base + i * 15 + Math.random() * 20)
-    const profit = Math.round(revenue * (0.55 + Math.random() * 0.15))
-    return {
-      period: format(subWeeks(now, week), 'dd MMM'),
-      revenue,
-      profit,
-    }
+// Fixed seed values so demo chart doesn't flicker on each render
+const WEEK_SEED = [95, 42, 118, 67, 88, 145, 73]
+const MONTH_SEED = [312, 278, 395, 341]
+const YEAR_SEED = [580, 620, 490, 710, 655, 720, 810, 695, 750, 830, 920, 880]
+
+export function getDemoChartData(): ChartRanges {
+  // Today: hourly points from midnight to now
+  const todayRevenues = [0, 0, 0, 0, 0, 0, 0, 0, 45, 0, 28, 0, 65, 0, 0, 22, 0, 0, 120, 0, 35, 0, 0, 0]
+  const currentHour = now.getHours()
+  const today: RevenueDataPoint[] = Array.from({ length: currentHour + 1 }, (_, h) => ({
+    period: `${String(h).padStart(2, '0')}:00`,
+    revenue: todayRevenues[h] ?? 0,
+    profit: Math.round((todayRevenues[h] ?? 0) * 0.62),
+  }))
+
+  // Week: last 7 days
+  const week: RevenueDataPoint[] = Array.from({ length: 7 }, (_, i) => {
+    const d = subDays(now, 6 - i)
+    const revenue = WEEK_SEED[i]
+    return { period: format(d, 'EEE'), revenue, profit: Math.round(revenue * 0.6) }
   })
+
+  // Month: 4 weekly buckets
+  const month: RevenueDataPoint[] = MONTH_SEED.map((revenue, i) => ({
+    period: `Wk ${i + 1}`,
+    revenue,
+    profit: Math.round(revenue * 0.59),
+  }))
+
+  // Year: 12 monthly buckets
+  const year: RevenueDataPoint[] = Array.from({ length: 12 }, (_, i) => {
+    const d = subMonths(now, 11 - i)
+    const revenue = YEAR_SEED[i]
+    return { period: format(d, 'MMM'), revenue, profit: Math.round(revenue * 0.58) }
+  })
+
+  return { today, week, month, year }
 }
 
 export function getDemoKPIs() {
   const allOrders = demoOrders
-  const monthOrders = demoOrders.filter((o) => {
-    const d = new Date(o.sold_at)
-    const start = new Date(now.getFullYear(), now.getMonth(), 1)
-    return d >= start
-  })
+  const monthStart = startOfMonth(now)
+  const monthOrders = demoOrders.filter((o) => new Date(o.sold_at) >= monthStart)
+
+  const lastMonthStart = startOfMonth(subMonths(now, 1))
+  const lastMonthEnd = endOfMonth(subMonths(now, 1))
 
   const totalRevenue = allOrders.reduce((s, o) => s + o.sale_price, 0)
   const totalProfit = allOrders.reduce((s, o) => s + o.profit, 0)
@@ -62,9 +87,13 @@ export function getDemoKPIs() {
   const monthProfit = monthOrders.reduce((s, o) => s + o.profit, 0)
   const avgMargin = allOrders.reduce((s, o) => s + o.margin_percent, 0) / allOrders.length
 
+  // Hardcoded demo last-month figures (no orders exist in demo data for last month)
+  const lastMonthRevenue = 312
+  const lastMonthProfit = 184
+
   const inStockCount = demoInventory.filter((i) => i.status === 'in_stock').length
   const stockValue = demoInventory.filter((i) => i.status !== 'sold').reduce((s, i) => s + i.cost_price, 0)
   const liveListings = demoInventory.filter((i) => i.status === 'listed').length
 
-  return { totalRevenue, totalProfit, monthRevenue, monthProfit, avgMargin, inStockCount, stockValue, liveListings, itemsSold: allOrders.length, monthSold: monthOrders.length }
+  return { totalRevenue, totalProfit, monthRevenue, monthProfit, avgMargin, inStockCount, stockValue, liveListings, itemsSold: allOrders.length, monthSold: monthOrders.length, lastMonthRevenue, lastMonthProfit }
 }

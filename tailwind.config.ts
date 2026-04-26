@@ -16,8 +16,8 @@ const config: Config = {
         },
       },
       fontFamily: {
-        mono: ['JetBrains Mono', 'Fira Code', 'Consolas', 'monospace'],
-        sans: ['Poppins', 'system-ui', 'sans-serif'],
+        mono: ['Familjen Grotesk', 'system-ui', 'sans-serif'],
+        sans: ['Familjen Grotesk', 'system-ui', 'sans-serif'],
       },
       borderRadius: {
         DEFAULT: '10px',

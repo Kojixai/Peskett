@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { cn } from '@/lib/utils'
 
 interface KpiCardProps {
@@ -7,16 +8,18 @@ interface KpiCardProps {
   trend?: 'up' | 'down' | 'neutral'
   accent?: boolean
   color?: string
+  href?: string
   className?: string
 }
 
-export function KpiCard({ label, value, sub, trend, accent, color, className }: KpiCardProps) {
-  return (
+export function KpiCard({ label, value, sub, trend, accent, color, href, className }: KpiCardProps) {
+  const inner = (
     <div
       className={cn(
         color ?? 'bg-[var(--bg-card)]',
         'rounded-2xl p-3 md:p-4 flex flex-col gap-1.5 shadow-sm border border-transparent',
         accent && 'border-orange-200 dark:border-orange-800/40',
+        href && 'hover:brightness-95 active:scale-[0.98] transition-all cursor-pointer',
         className
       )}
     >
@@ -36,4 +39,7 @@ export function KpiCard({ label, value, sub, trend, accent, color, className }: 
       )}
     </div>
   )
+
+  if (href) return <Link href={href}>{inner}</Link>
+  return inner
 }

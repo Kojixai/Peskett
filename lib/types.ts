@@ -107,3 +107,10 @@ export interface RevenueDataPoint {
   revenue: number
   profit: number
 }
+
+export interface ChartRanges {
+  today: RevenueDataPoint[]
+  week: RevenueDataPoint[]
+  month: RevenueDataPoint[]
+  year: RevenueDataPoint[]
+}
