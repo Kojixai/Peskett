@@ -6,30 +6,32 @@ interface KpiCardProps {
   sub?: string
   trend?: 'up' | 'down' | 'neutral'
   accent?: boolean
+  color?: string
   className?: string
 }
 
-export function KpiCard({ label, value, sub, trend, accent, className }: KpiCardProps) {
+export function KpiCard({ label, value, sub, trend, accent, color, className }: KpiCardProps) {
   return (
     <div
       className={cn(
-        'bg-[var(--bg-card)] rounded-2xl p-4 flex flex-col gap-2 shadow-sm border border-[var(--border)]',
-        accent && 'border-orange-200 dark:border-orange-900/40',
+        color ?? 'bg-[var(--bg-card)]',
+        'rounded-2xl p-3 md:p-4 flex flex-col gap-1.5 shadow-sm border border-transparent',
+        accent && 'border-orange-200 dark:border-orange-800/40',
         className
       )}
     >
-      <div className="text-xs text-[var(--text-muted)] uppercase tracking-widest font-medium">{label}</div>
+      <div className="text-[10px] md:text-xs text-[var(--text-muted)] uppercase tracking-widest font-semibold leading-tight">{label}</div>
       <div className={cn(
-        'font-mono text-2xl font-bold',
+        'font-bold text-lg md:text-2xl leading-tight',
         accent ? 'text-[#f97316]' : 'text-[var(--text)]'
       )}>
         {value}
       </div>
       {sub && (
-        <div className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
+        <div className="flex items-center gap-1 text-[10px] md:text-xs text-[var(--text-muted)]">
           {trend === 'up' && <span className="text-emerald-500 font-bold">↑</span>}
           {trend === 'down' && <span className="text-red-500 font-bold">↓</span>}
-          <span>{sub}</span>
+          <span className="truncate">{sub}</span>
         </div>
       )}
     </div>

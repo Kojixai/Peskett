@@ -70,65 +70,73 @@ function isSupabaseConfigured() {
   return !!(url && key && !url.includes('placeholder') && key.length > 50)
 }
 
+// Pastel card colours — light bg / subtle dark variant
+const KPI_COLORS = [
+  'bg-orange-50  dark:bg-orange-950/25',   // Revenue
+  'bg-emerald-50 dark:bg-emerald-950/25',  // Profit
+  'bg-purple-50  dark:bg-purple-950/25',   // Avg Margin
+  'bg-blue-50    dark:bg-blue-950/25',     // Items Sold
+  'bg-rose-50    dark:bg-rose-950/25',     // In Stock
+  'bg-teal-50    dark:bg-teal-950/25',     // Cash Balance
+  'bg-amber-50   dark:bg-amber-950/25',    // Live Listings
+  'bg-violet-50  dark:bg-violet-950/25',   // Stock Value
+]
+
 export default async function DashboardPage() {
   const isDemo = process.env.DEMO_MODE === 'true' || !isSupabaseConfigured()
   const now = new Date()
 
   const d = isDemo ? await getDemoData() : await getLiveData()
 
+  const kpis = [
+    { label: 'Revenue (month)', value: formatCurrency(d.monthRevenue), sub: `All time: ${formatCurrency(d.totalRevenue)}`, accent: true },
+    { label: 'Profit (month)', value: formatCurrency(d.monthProfit), sub: `All time: ${formatCurrency(d.totalProfit)}`, trend: d.monthProfit > 0 ? 'up' : 'down' as const },
+    { label: 'Avg Margin', value: formatPercent(d.avgMargin), sub: `${d.itemsSold} items sold` },
+    { label: 'Items Sold', value: String(d.monthSold), sub: `${d.itemsSold} all time` },
+    { label: 'In Stock', value: String(d.inStockCount), sub: `Value: ${formatCurrency(d.stockValue)}` },
+    { label: 'Cash Balance', value: d.starlingBalance ? formatCurrency(d.starlingBalance.balance) : '—', sub: d.starlingBalance ? 'Starling Bank' : 'Connect Starling' },
+    { label: 'Live Listings', value: String(d.liveListings), sub: 'Currently on Vinted' },
+    { label: 'Stock Value', value: formatCurrency(d.stockValue), sub: 'Cost price basis' },
+  ]
+
   return (
     <div className="p-4 md:p-6 space-y-5 md:space-y-6">
       {/* Demo banner */}
       {isDemo && (
         <div className="border border-[#f97316]/40 bg-orange-50/50 dark:bg-[#431407]/20 px-4 py-2.5 rounded-xl flex items-center justify-between gap-3">
-          <span className="text-sm text-[#f97316] font-mono">DEMO MODE</span>
+          <span className="text-sm text-[#f97316] font-semibold">DEMO MODE</span>
           <span className="text-xs text-[var(--text-muted)] hidden sm:block">Add your API keys in .env.local to go live</span>
         </div>
       )}
 
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-lg font-semibold text-[var(--text)] uppercase tracking-widest">Dashboard</h1>
-          <p className="text-xs text-[var(--text-muted)] mt-0.5">{format(now, 'EEEE, d MMMM yyyy')}</p>
-        </div>
+      <div>
+        <h1 className="text-xl font-bold text-[var(--text)]">Dashboard</h1>
+        <p className="text-xs text-[var(--text-muted)] mt-0.5">{format(now, 'EEEE, d MMMM yyyy')}</p>
       </div>
 
-      {/* KPI grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
-        <KpiCard label="Revenue (month)" value={formatCurrency(d.monthRevenue)} sub={`All time: ${formatCurrency(d.totalRevenue)}`} accent />
-        <KpiCard label="Profit (month)" value={formatCurrency(d.monthProfit)} sub={`All time: ${formatCurrency(d.totalProfit)}`} trend={d.monthProfit > 0 ? 'up' : 'down'} />
-        <KpiCard label="Avg Margin" value={formatPercent(d.avgMargin)} sub={`${d.itemsSold} items sold`} />
-        <KpiCard label="Items Sold" value={String(d.monthSold)} sub={`${d.itemsSold} all time`} />
-        <KpiCard label="In Stock" value={String(d.inStockCount)} sub={`Value: ${formatCurrency(d.stockValue)}`} />
-        <KpiCard label="Cash Balance" value={d.starlingBalance ? formatCurrency(d.starlingBalance.balance) : '—'} sub={d.starlingBalance ? 'Starling Bank' : 'Connect Starling'} />
-        <KpiCard label="Live Listings" value={String(d.liveListings)} sub="Currently on Vinted" />
-        <KpiCard label="Stock Value" value={formatCurrency(d.stockValue)} sub="Cost price basis" />
-      </div>
-
-      {/* Chart + Recent sales */}
+      {/* ── Chart + Recent Sales ── moved to top */}
       <div className="grid grid-cols-1 xl:grid-cols-5 gap-4">
         <div className="xl:col-span-3">
           <RevenueChart data={d.chartData} />
         </div>
 
-        {/* Recent sales */}
         <div className="xl:col-span-2 bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-sm">
-          <div className="px-4 py-3 border-b border-[var(--border)] text-xs text-[var(--text-muted)] uppercase tracking-widest">Recent Sales</div>
+          <div className="px-4 py-3 border-b border-[var(--border)] text-xs font-semibold text-[var(--text-muted)] uppercase tracking-widest">Recent Sales</div>
           <div className="divide-y divide-[var(--border)]">
             {d.recentOrders.length > 0 ? (
-              d.recentOrders.map((order: any) => (
+              d.recentOrders.slice(0, 6).map((order: any) => (
                 <div key={order.id} className="px-4 py-3 flex items-center justify-between gap-3">
                   <div className="min-w-0">
                     <div className="text-xs font-mono text-[var(--text-muted)] truncate">{order.inventory_items?.sku ?? '—'}</div>
-                    <div className="text-sm text-[var(--text-2)] truncate mt-0.5">
+                    <div className="text-sm font-medium text-[var(--text-2)] truncate mt-0.5">
                       {order.inventory_items?.brand ?? ''}{' '}{order.inventory_items?.description ?? 'Item'}
                     </div>
                     <div className="text-xs text-[var(--text-subtle)] mt-0.5">{formatDate(order.sold_at)}</div>
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <div className="font-mono text-sm text-[var(--text)]">{formatCurrency(order.sale_price)}</div>
-                    <div className={`font-mono text-xs ${order.profit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                    <div className="font-semibold text-sm text-[var(--text)]">{formatCurrency(order.sale_price)}</div>
+                    <div className={`text-xs font-medium ${order.profit >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
                       {order.profit >= 0 ? '+' : ''}{formatCurrency(order.profit)}
                     </div>
                   </div>
@@ -139,26 +147,41 @@ export default async function DashboardPage() {
             )}
           </div>
           {d.recentOrders.length > 0 && (
-            <div className="px-4 py-2 border-t border-[var(--border)]">
-              <Link href="/orders" className="text-xs text-[#f97316] hover:text-[#ea6c0a]">View all orders →</Link>
+            <div className="px-4 py-2.5 border-t border-[var(--border)]">
+              <Link href="/orders" className="text-xs font-medium text-[#f97316] hover:text-[#ea6c0a]">View all orders →</Link>
             </div>
           )}
         </div>
+      </div>
+
+      {/* ── KPI grid — 3 cols mobile, 4 cols md+ ── */}
+      <div className="grid grid-cols-3 md:grid-cols-4 gap-2 md:gap-3">
+        {kpis.map((kpi, i) => (
+          <KpiCard
+            key={kpi.label}
+            label={kpi.label}
+            value={kpi.value}
+            sub={kpi.sub}
+            trend={'trend' in kpi ? (kpi.trend as 'up' | 'down' | 'neutral') : undefined}
+            accent={'accent' in kpi ? kpi.accent : false}
+            color={KPI_COLORS[i]}
+          />
+        ))}
       </div>
 
       {/* P&L table — desktop only */}
       {d.recentOrders.length > 0 && (
         <div className="hidden md:block bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-sm">
           <div className="px-4 py-3 border-b border-[var(--border)] flex items-center justify-between">
-            <div className="text-xs text-[var(--text-muted)] uppercase tracking-widest">P&amp;L Breakdown</div>
-            <Link href="/orders" className="text-xs text-[#f97316] hover:text-[#ea6c0a]">All orders →</Link>
+            <div className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-widest">P&amp;L Breakdown</div>
+            <Link href="/orders" className="text-xs font-medium text-[#f97316] hover:text-[#ea6c0a]">All orders →</Link>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-[var(--border)]">
                   {['SKU', 'Item', 'Cost', 'List', 'Sale', 'Fees', 'Net', 'Profit', 'Margin'].map((h) => (
-                    <th key={h} className="px-4 py-2 text-left text-xs text-[var(--text-muted)] uppercase tracking-widest font-normal">{h}</th>
+                    <th key={h} className="px-4 py-2 text-left text-xs text-[var(--text-muted)] uppercase tracking-widest font-medium">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -174,7 +197,7 @@ export default async function DashboardPage() {
                       <td className="px-4 py-2 font-mono text-xs text-[var(--text)]">{formatCurrency(order.sale_price)}</td>
                       <td className="px-4 py-2 font-mono text-xs text-[var(--text-muted)]">{formatCurrency(order.platform_fee + order.shipping_cost)}</td>
                       <td className="px-4 py-2 font-mono text-xs text-[var(--text)]">{formatCurrency(order.net_revenue)}</td>
-                      <td className={`px-4 py-2 font-mono text-xs font-medium ${order.profit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                      <td className={`px-4 py-2 font-mono text-xs font-semibold ${order.profit >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
                         {order.profit >= 0 ? '+' : ''}{formatCurrency(order.profit)}
                       </td>
                       <td className="px-4 py-2 font-mono text-xs text-[var(--text-muted)]">{formatPercent(order.margin_percent ?? 0)}</td>
