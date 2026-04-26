@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { ThemeToggle } from '@/components/layout/theme-toggle'
 import type { OfferRule } from '@/lib/types'
 
 export default function SettingsPage() {
@@ -59,6 +60,20 @@ export default function SettingsPage() {
         <h1 className="text-lg font-semibold text-[var(--text)] uppercase tracking-widest">Settings</h1>
         <p className="text-xs text-[var(--text-muted)] mt-0.5">Offer rules and configuration</p>
       </div>
+
+      {/* Appearance */}
+      <section className="space-y-4">
+        <h2 className="text-sm text-[var(--text-2)] uppercase tracking-widest">Appearance</h2>
+        <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl">
+          <div className="flex items-center justify-between px-4 py-3">
+            <div>
+              <div className="text-sm text-[var(--text-2)]">Dark mode</div>
+              <div className="text-xs text-[var(--text-subtle)] mt-0.5">Toggle light / dark theme</div>
+            </div>
+            <ThemeToggle />
+          </div>
+        </div>
+      </section>
 
       {/* Offer rules */}
       <section className="space-y-4">

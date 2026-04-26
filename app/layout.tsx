@@ -11,6 +11,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
+  viewportFit: 'cover',
 }
 
 // Runs before React hydrates — sets theme class from localStorage to prevent flash

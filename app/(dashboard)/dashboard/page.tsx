@@ -3,7 +3,7 @@ import { RevenueChart } from '@/components/dashboard/revenue-chart'
 import { formatCurrency, formatPercent } from '@/lib/utils'
 import type { RevenueDataPoint } from '@/lib/types'
 import Link from 'next/link'
-import { format, startOfMonth } from 'date-fns'
+import { startOfMonth } from 'date-fns'
 
 export const dynamic = 'force-dynamic'
 
@@ -84,7 +84,6 @@ const KPI_COLORS = [
 
 export default async function DashboardPage() {
   const isDemo = process.env.DEMO_MODE === 'true' || !isSupabaseConfigured()
-  const now = new Date()
 
   const d = isDemo ? await getDemoData() : await getLiveData()
 
@@ -100,21 +99,7 @@ export default async function DashboardPage() {
   ]
 
   return (
-    <div className="p-4 md:p-6 space-y-5 md:space-y-6">
-      {/* Demo banner */}
-      {isDemo && (
-        <div className="border border-[#f97316]/40 bg-orange-50/50 dark:bg-[#431407]/20 px-4 py-2.5 rounded-xl flex items-center justify-between gap-3">
-          <span className="text-sm text-[#f97316] font-semibold">DEMO MODE</span>
-          <span className="text-xs text-[var(--text-muted)] hidden sm:block">Add your API keys in .env.local to go live</span>
-        </div>
-      )}
-
-      {/* Header */}
-      <div>
-        <h1 className="text-xl font-bold text-[var(--text)]">Dashboard</h1>
-        <p className="text-xs text-[var(--text-muted)] mt-0.5">{format(now, 'EEEE, d MMMM yyyy')}</p>
-      </div>
-
+    <div className="p-3 md:p-6 space-y-3 md:space-y-5">
       {/* ── Chart ── */}
       <div>
         <RevenueChart data={d.chartData} />
