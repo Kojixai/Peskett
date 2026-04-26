@@ -29,7 +29,7 @@ export function RevenueChart({ data }: RevenueChartProps) {
   return (
     <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border)] p-4 shadow-sm">
       <div className="text-xs text-[var(--text-muted)] uppercase tracking-widest mb-4 font-medium">Revenue vs Profit</div>
-      <ResponsiveContainer width="100%" height={240}>
+      <ResponsiveContainer width="100%" height={120}>
         <LineChart data={data} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 6" stroke="var(--border)" />
           <XAxis

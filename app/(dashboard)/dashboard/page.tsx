@@ -1,6 +1,6 @@
 import { KpiCard } from '@/components/dashboard/kpi-card'
 import { RevenueChart } from '@/components/dashboard/revenue-chart'
-import { formatCurrency, formatPercent, formatDate } from '@/lib/utils'
+import { formatCurrency, formatPercent } from '@/lib/utils'
 import type { RevenueDataPoint } from '@/lib/types'
 import Link from 'next/link'
 import { format, startOfMonth } from 'date-fns'
@@ -115,43 +115,9 @@ export default async function DashboardPage() {
         <p className="text-xs text-[var(--text-muted)] mt-0.5">{format(now, 'EEEE, d MMMM yyyy')}</p>
       </div>
 
-      {/* ── Chart + Recent Sales ── moved to top */}
-      <div className="grid grid-cols-1 xl:grid-cols-5 gap-4">
-        <div className="xl:col-span-3">
-          <RevenueChart data={d.chartData} />
-        </div>
-
-        <div className="xl:col-span-2 bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-sm">
-          <div className="px-4 py-3 border-b border-[var(--border)] text-xs font-semibold text-[var(--text-muted)] uppercase tracking-widest">Recent Sales</div>
-          <div className="divide-y divide-[var(--border)]">
-            {d.recentOrders.length > 0 ? (
-              d.recentOrders.slice(0, 6).map((order: any) => (
-                <div key={order.id} className="px-4 py-3 flex items-center justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="text-xs font-mono text-[var(--text-muted)] truncate">{order.inventory_items?.sku ?? '—'}</div>
-                    <div className="text-sm font-medium text-[var(--text-2)] truncate mt-0.5">
-                      {order.inventory_items?.brand ?? ''}{' '}{order.inventory_items?.description ?? 'Item'}
-                    </div>
-                    <div className="text-xs text-[var(--text-subtle)] mt-0.5">{formatDate(order.sold_at)}</div>
-                  </div>
-                  <div className="text-right flex-shrink-0">
-                    <div className="font-semibold text-sm text-[var(--text)]">{formatCurrency(order.sale_price)}</div>
-                    <div className={`text-xs font-medium ${order.profit >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
-                      {order.profit >= 0 ? '+' : ''}{formatCurrency(order.profit)}
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="px-4 py-8 text-center text-[var(--text-subtle)] text-sm">No sales yet</div>
-            )}
-          </div>
-          {d.recentOrders.length > 0 && (
-            <div className="px-4 py-2.5 border-t border-[var(--border)]">
-              <Link href="/orders" className="text-xs font-medium text-[#f97316] hover:text-[#ea6c0a]">View all orders →</Link>
-            </div>
-          )}
-        </div>
+      {/* ── Chart ── */}
+      <div>
+        <RevenueChart data={d.chartData} />
       </div>
 
       {/* ── KPI grid — 3 cols mobile, 4 cols md+ ── */}
