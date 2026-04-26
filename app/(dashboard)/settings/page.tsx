@@ -56,18 +56,18 @@ export default function SettingsPage() {
   return (
     <div className="p-6 max-w-2xl space-y-8">
       <div>
-        <h1 className="text-lg font-semibold text-zinc-100 uppercase tracking-widest">Settings</h1>
-        <p className="text-xs text-zinc-500 mt-0.5">Offer rules and configuration</p>
+        <h1 className="text-lg font-semibold text-[var(--text)] uppercase tracking-widest">Settings</h1>
+        <p className="text-xs text-[var(--text-muted)] mt-0.5">Offer rules and configuration</p>
       </div>
 
       {/* Offer rules */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm text-zinc-300 uppercase tracking-widest">Smart Offer Rules</h2>
+          <h2 className="text-sm text-[var(--text-2)] uppercase tracking-widest">Smart Offer Rules</h2>
         </div>
 
-        <div className="bg-[#111113] border border-[#27272a] p-4 space-y-4">
-          <p className="text-xs text-zinc-500">
+        <div className="bg-[var(--bg-card)] border border-[var(--border)] p-4 space-y-4">
+          <p className="text-xs text-[var(--text-muted)]">
             Set rules for automatically accepting, countering, or rejecting offers on Vinted.
           </p>
 
@@ -76,11 +76,11 @@ export default function SettingsPage() {
               {rules.map((rule) => (
                 <div
                   key={rule.id}
-                  className="flex items-center justify-between p-3 bg-[#18181b] border border-[#27272a]"
+                  className="flex items-center justify-between p-3 bg-[var(--bg-elevated)] border border-[var(--border)]"
                 >
                   <div className="space-y-1">
-                    <div className="text-sm text-zinc-200 font-medium">{rule.rule_name}</div>
-                    <div className="text-xs text-zinc-500 font-mono">
+                    <div className="text-sm text-[var(--text)] font-medium">{rule.rule_name}</div>
+                    <div className="text-xs text-[var(--text-muted)] font-mono">
                       Accept ≥{rule.min_accept_percent}% · Counter at {rule.counter_percent}% · Reject &lt;{rule.auto_reject_below}%
                     </div>
                   </div>
@@ -89,7 +89,7 @@ export default function SettingsPage() {
                       <div
                         onClick={() => toggleRule(rule.id, !rule.active)}
                         className={`w-8 h-4 relative transition-colors cursor-pointer ${
-                          rule.active ? 'bg-[#f97316]' : 'bg-[#27272a]'
+                          rule.active ? 'bg-[#f97316]' : 'bg-[var(--border-strong)]'
                         }`}
                       >
                         <div
@@ -98,11 +98,11 @@ export default function SettingsPage() {
                           }`}
                         />
                       </div>
-                      <span className="text-xs text-zinc-500">{rule.active ? 'Active' : 'Off'}</span>
+                      <span className="text-xs text-[var(--text-muted)]">{rule.active ? 'Active' : 'Off'}</span>
                     </label>
                     <button
                       onClick={() => deleteRule(rule.id)}
-                      className="text-xs text-zinc-600 hover:text-red-400 transition-colors"
+                      className="text-xs text-[var(--text-subtle)] hover:text-red-400 transition-colors"
                     >
                       Delete
                     </button>
@@ -112,8 +112,8 @@ export default function SettingsPage() {
             </div>
           )}
 
-          <form onSubmit={saveRule} className="space-y-3 pt-2 border-t border-[#27272a]">
-            <div className="text-xs text-zinc-500 uppercase tracking-widest">Add Rule</div>
+          <form onSubmit={saveRule} className="space-y-3 pt-2 border-t border-[var(--border)]">
+            <div className="text-xs text-[var(--text-muted)] uppercase tracking-widest">Add Rule</div>
             <Input
               label="Rule Name"
               value={ruleName}
@@ -159,26 +159,26 @@ export default function SettingsPage() {
 
       {/* API status */}
       <section className="space-y-4">
-        <h2 className="text-sm text-zinc-300 uppercase tracking-widest">API Connections</h2>
-        <div className="bg-[#111113] border border-[#27272a]">
+        <h2 className="text-sm text-[var(--text-2)] uppercase tracking-widest">API Connections</h2>
+        <div className="bg-[var(--bg-card)] border border-[var(--border)]">
           {[
             { label: 'Vinted Pro API', env: 'VINTED_PRO_ACCESS_KEY', required: true },
             { label: 'Starling Bank API', env: 'STARLING_ACCESS_TOKEN', required: false },
             { label: 'eBay API', env: 'EBAY_CLIENT_ID', required: false },
             { label: 'Claude AI', env: 'ANTHROPIC_API_KEY', required: true },
           ].map((item) => (
-            <div key={item.label} className="flex items-center justify-between px-4 py-3 border-b last:border-b-0 border-[#1e1e22]">
+            <div key={item.label} className="flex items-center justify-between px-4 py-3 border-b last:border-b-0 border-[var(--border)]">
               <div>
-                <div className="text-sm text-zinc-300">{item.label}</div>
-                <div className="font-mono text-xs text-zinc-600">{item.env}</div>
+                <div className="text-sm text-[var(--text-2)]">{item.label}</div>
+                <div className="font-mono text-xs text-[var(--text-subtle)]">{item.env}</div>
               </div>
-              <div className={`text-xs font-mono ${item.required ? 'text-amber-400' : 'text-zinc-600'}`}>
+              <div className={`text-xs font-mono ${item.required ? 'text-amber-400' : 'text-[var(--text-subtle)]'}`}>
                 {item.required ? 'Required' : 'Optional'}
               </div>
             </div>
           ))}
         </div>
-        <p className="text-xs text-zinc-600">Configure API keys in your <code className="font-mono bg-[#18181b] px-1">.env.local</code> file.</p>
+        <p className="text-xs text-[var(--text-subtle)]">Configure API keys in your <code className="font-mono bg-[var(--bg-elevated)] px-1">.env.local</code> file.</p>
       </section>
     </div>
   )

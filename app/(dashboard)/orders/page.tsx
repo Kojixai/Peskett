@@ -34,8 +34,8 @@ export default async function OrdersPage() {
     <div className="p-4 md:p-6 space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-semibold text-zinc-100 uppercase tracking-widest">Orders</h1>
-          <p className="text-xs text-zinc-500 mt-0.5">{orders?.length ?? 0} total sales</p>
+          <h1 className="text-lg font-semibold text-[var(--text)] uppercase tracking-widest">Orders</h1>
+          <p className="text-xs text-[var(--text-muted)] mt-0.5">{orders?.length ?? 0} total sales</p>
         </div>
       </div>
 
@@ -46,44 +46,44 @@ export default async function OrdersPage() {
           { label: 'Profit', value: formatCurrency(totalProfit) },
           { label: 'Avg Margin', value: `${avgMargin.toFixed(1)}%` },
         ].map((item) => (
-          <div key={item.label} className="bg-[#111113] border border-[#27272a] px-3 md:px-4 py-3">
-            <div className="text-xs text-zinc-500 uppercase tracking-widest truncate">{item.label}</div>
-            <div className="font-mono text-base md:text-lg font-bold text-zinc-100 mt-1">{item.value}</div>
+          <div key={item.label} className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl px-3 md:px-4 py-3 shadow-sm">
+            <div className="text-xs text-[var(--text-muted)] uppercase tracking-widest truncate">{item.label}</div>
+            <div className="font-mono text-base md:text-lg font-bold text-[var(--text)] mt-1">{item.value}</div>
           </div>
         ))}
       </div>
 
-      <div className="bg-[#111113] border border-[#27272a]">
+      <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-sm">
         {!orders || orders.length === 0 ? (
           <div className="py-16 text-center">
-            <p className="text-zinc-600 text-sm">No orders yet</p>
+            <p className="text-[var(--text-subtle)] text-sm">No orders yet</p>
           </div>
         ) : (
           <>
             {/* Mobile card view */}
-            <div className="divide-y divide-[#1e1e22] md:hidden">
+            <div className="divide-y divide-[var(--border)] md:hidden">
               {orders.map((order: any) => {
                 const item = order.inventory_items
                 return (
                   <div key={order.id} className="p-4 space-y-2">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <div className="font-mono text-xs text-zinc-500">{item?.sku ?? '—'}</div>
-                        <div className="text-sm text-zinc-200 mt-0.5 truncate">
+                        <div className="font-mono text-xs text-[var(--text-muted)]">{item?.sku ?? '—'}</div>
+                        <div className="text-sm text-[var(--text)] mt-0.5 truncate">
                           {item?.brand && <span className="font-medium">{item.brand} </span>}
                           {item?.description}
                         </div>
                       </div>
                       <div className="text-right flex-shrink-0">
-                        <div className="font-mono text-sm text-zinc-100">{formatCurrency(order.sale_price)}</div>
+                        <div className="font-mono text-sm text-[var(--text)]">{formatCurrency(order.sale_price)}</div>
                         <div className={`font-mono text-xs mt-0.5 ${order.profit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
                           {order.profit >= 0 ? '+' : ''}{formatCurrency(order.profit)}
                         </div>
                       </div>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="font-mono text-xs text-zinc-600">{formatDate(order.sold_at)}</span>
-                      <span className="font-mono text-xs text-zinc-500">{order.margin_percent?.toFixed(1)}% margin</span>
+                      <span className="font-mono text-xs text-[var(--text-subtle)]">{formatDate(order.sold_at)}</span>
+                      <span className="font-mono text-xs text-[var(--text-muted)]">{order.margin_percent?.toFixed(1)}% margin</span>
                     </div>
                     {order.shipment_label_url && (
                       <a
@@ -104,36 +104,36 @@ export default async function OrdersPage() {
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-[#27272a]">
+                  <tr className="border-b border-[var(--border)]">
                     {['SKU', 'Item', 'Sale Price', 'Fees', 'Net', 'Profit', 'Margin', 'Date', 'Label'].map((h) => (
-                      <th key={h} className="px-4 py-2.5 text-left text-xs text-zinc-500 uppercase tracking-widest font-normal">
+                      <th key={h} className="px-4 py-2.5 text-left text-xs text-[var(--text-muted)] uppercase tracking-widest font-normal">
                         {h}
                       </th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#1e1e22]">
+                <tbody className="divide-y divide-[var(--border)]">
                   {orders.map((order: any) => {
                     const item = order.inventory_items
                     return (
-                      <tr key={order.id} className="hover:bg-[#18181b] transition-colors">
-                        <td className="px-4 py-3 font-mono text-xs text-zinc-400">{item?.sku ?? '—'}</td>
-                        <td className="px-4 py-3 text-sm text-zinc-300 max-w-40 truncate">
+                      <tr key={order.id} className="hover:bg-[var(--bg-elevated)] transition-colors">
+                        <td className="px-4 py-3 font-mono text-xs text-[var(--text-muted)]">{item?.sku ?? '—'}</td>
+                        <td className="px-4 py-3 text-sm text-[var(--text-2)] max-w-40 truncate">
                           {item?.brand && <span className="font-medium">{item.brand} </span>}
                           {item?.description}
                         </td>
-                        <td className="px-4 py-3 font-mono text-sm text-zinc-100">{formatCurrency(order.sale_price)}</td>
-                        <td className="px-4 py-3 font-mono text-xs text-zinc-500">
+                        <td className="px-4 py-3 font-mono text-sm text-[var(--text)]">{formatCurrency(order.sale_price)}</td>
+                        <td className="px-4 py-3 font-mono text-xs text-[var(--text-muted)]">
                           {formatCurrency(order.platform_fee + order.shipping_cost)}
                         </td>
-                        <td className="px-4 py-3 font-mono text-sm text-zinc-200">{formatCurrency(order.net_revenue)}</td>
+                        <td className="px-4 py-3 font-mono text-sm text-[var(--text)]">{formatCurrency(order.net_revenue)}</td>
                         <td className={`px-4 py-3 font-mono text-sm font-medium ${order.profit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
                           {order.profit >= 0 ? '+' : ''}{formatCurrency(order.profit)}
                         </td>
-                        <td className="px-4 py-3 font-mono text-xs text-zinc-400">
+                        <td className="px-4 py-3 font-mono text-xs text-[var(--text-muted)]">
                           {order.margin_percent?.toFixed(1)}%
                         </td>
-                        <td className="px-4 py-3 font-mono text-xs text-zinc-500">{formatDate(order.sold_at)}</td>
+                        <td className="px-4 py-3 font-mono text-xs text-[var(--text-muted)]">{formatDate(order.sold_at)}</td>
                         <td className="px-4 py-3">
                           {order.shipment_label_url ? (
                             <a
@@ -145,7 +145,7 @@ export default async function OrdersPage() {
                               Label ↓
                             </a>
                           ) : (
-                            <span className="text-xs text-zinc-700">—</span>
+                            <span className="text-xs text-[var(--text-subtle)]">—</span>
                           )}
                         </td>
                       </tr>

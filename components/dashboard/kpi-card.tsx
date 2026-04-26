@@ -13,19 +13,22 @@ export function KpiCard({ label, value, sub, trend, accent, className }: KpiCard
   return (
     <div
       className={cn(
-        'bg-[#111113] border border-[#27272a] p-4 flex flex-col gap-3',
-        accent && 'border-[#f97316]/30',
+        'bg-[var(--bg-card)] rounded-2xl p-4 flex flex-col gap-2 shadow-sm border border-[var(--border)]',
+        accent && 'border-orange-200 dark:border-orange-900/40',
         className
       )}
     >
-      <div className="text-xs text-zinc-500 uppercase tracking-widest">{label}</div>
-      <div className={cn('font-mono text-2xl font-bold', accent ? 'text-[#f97316]' : 'text-zinc-100')}>
+      <div className="text-xs text-[var(--text-muted)] uppercase tracking-widest font-medium">{label}</div>
+      <div className={cn(
+        'font-mono text-2xl font-bold',
+        accent ? 'text-[#f97316]' : 'text-[var(--text)]'
+      )}>
         {value}
       </div>
       {sub && (
-        <div className="flex items-center gap-1.5 text-xs text-zinc-500">
-          {trend === 'up' && <span className="text-emerald-400">↑</span>}
-          {trend === 'down' && <span className="text-red-400">↓</span>}
+        <div className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
+          {trend === 'up' && <span className="text-emerald-500 font-bold">↑</span>}
+          {trend === 'down' && <span className="text-red-500 font-bold">↓</span>}
           <span>{sub}</span>
         </div>
       )}

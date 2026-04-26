@@ -10,11 +10,11 @@ export function Input({ label, error, className, ...props }: InputProps) {
   return (
     <div className="space-y-1.5">
       {label && (
-        <label className="block text-xs text-zinc-400 uppercase tracking-widest">{label}</label>
+        <label className="block text-xs text-[var(--text-muted)] uppercase tracking-widest">{label}</label>
       )}
       <input
         className={cn(
-          'w-full bg-[#111113] border border-[#27272a] px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600',
+          'w-full bg-[var(--bg-card)] border border-[var(--border)] px-3 py-2 text-sm text-[var(--text)] placeholder-[var(--text-subtle)]',
           'focus:outline-none focus:border-[#f97316] transition-colors',
           error && 'border-red-800',
           className
@@ -35,11 +35,11 @@ export function Textarea({ label, error, className, ...props }: TextareaProps) {
   return (
     <div className="space-y-1.5">
       {label && (
-        <label className="block text-xs text-zinc-400 uppercase tracking-widest">{label}</label>
+        <label className="block text-xs text-[var(--text-muted)] uppercase tracking-widest">{label}</label>
       )}
       <textarea
         className={cn(
-          'w-full bg-[#111113] border border-[#27272a] px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600',
+          'w-full bg-[var(--bg-card)] border border-[var(--border)] px-3 py-2 text-sm text-[var(--text)] placeholder-[var(--text-subtle)]',
           'focus:outline-none focus:border-[#f97316] transition-colors resize-none',
           error && 'border-red-800',
           className
@@ -62,11 +62,11 @@ export function Select({ label, error, options, placeholder, className, ...props
   return (
     <div className="space-y-1.5">
       {label && (
-        <label className="block text-xs text-zinc-400 uppercase tracking-widest">{label}</label>
+        <label className="block text-xs text-[var(--text-muted)] uppercase tracking-widest">{label}</label>
       )}
       <select
         className={cn(
-          'w-full bg-[#111113] border border-[#27272a] px-3 py-2 text-sm text-zinc-100',
+          'w-full bg-[var(--bg-card)] border border-[var(--border)] px-3 py-2 text-sm text-[var(--text)]',
           'focus:outline-none focus:border-[#f97316] transition-colors appearance-none cursor-pointer',
           error && 'border-red-800',
           className
@@ -74,7 +74,7 @@ export function Select({ label, error, options, placeholder, className, ...props
         {...props}
       >
         {placeholder && (
-          <option value="" className="text-zinc-600">{placeholder}</option>
+          <option value="" className="text-[var(--text-subtle)]">{placeholder}</option>
         )}
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>

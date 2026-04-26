@@ -80,17 +80,17 @@ export default async function DashboardPage() {
     <div className="p-4 md:p-6 space-y-5 md:space-y-6">
       {/* Demo banner */}
       {isDemo && (
-        <div className="border border-[#f97316]/40 bg-[#431407]/20 px-4 py-2.5 flex items-center justify-between gap-3">
+        <div className="border border-[#f97316]/40 bg-orange-50/50 dark:bg-[#431407]/20 px-4 py-2.5 rounded-xl flex items-center justify-between gap-3">
           <span className="text-sm text-[#f97316] font-mono">DEMO MODE</span>
-          <span className="text-xs text-zinc-500 hidden sm:block">Add your API keys in .env.local to go live</span>
+          <span className="text-xs text-[var(--text-muted)] hidden sm:block">Add your API keys in .env.local to go live</span>
         </div>
       )}
 
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-semibold text-zinc-100 uppercase tracking-widest">Dashboard</h1>
-          <p className="text-xs text-zinc-500 mt-0.5">{format(now, 'EEEE, d MMMM yyyy')}</p>
+          <h1 className="text-lg font-semibold text-[var(--text)] uppercase tracking-widest">Dashboard</h1>
+          <p className="text-xs text-[var(--text-muted)] mt-0.5">{format(now, 'EEEE, d MMMM yyyy')}</p>
         </div>
       </div>
 
@@ -113,21 +113,21 @@ export default async function DashboardPage() {
         </div>
 
         {/* Recent sales */}
-        <div className="xl:col-span-2 bg-[#111113] border border-[#27272a]">
-          <div className="px-4 py-3 border-b border-[#27272a] text-xs text-zinc-500 uppercase tracking-widest">Recent Sales</div>
-          <div className="divide-y divide-[#1e1e22]">
+        <div className="xl:col-span-2 bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-sm">
+          <div className="px-4 py-3 border-b border-[var(--border)] text-xs text-[var(--text-muted)] uppercase tracking-widest">Recent Sales</div>
+          <div className="divide-y divide-[var(--border)]">
             {d.recentOrders.length > 0 ? (
               d.recentOrders.map((order: any) => (
                 <div key={order.id} className="px-4 py-3 flex items-center justify-between gap-3">
                   <div className="min-w-0">
-                    <div className="text-xs font-mono text-zinc-400 truncate">{order.inventory_items?.sku ?? '—'}</div>
-                    <div className="text-sm text-zinc-300 truncate mt-0.5">
+                    <div className="text-xs font-mono text-[var(--text-muted)] truncate">{order.inventory_items?.sku ?? '—'}</div>
+                    <div className="text-sm text-[var(--text-2)] truncate mt-0.5">
                       {order.inventory_items?.brand ?? ''}{' '}{order.inventory_items?.description ?? 'Item'}
                     </div>
-                    <div className="text-xs text-zinc-600 mt-0.5">{formatDate(order.sold_at)}</div>
+                    <div className="text-xs text-[var(--text-subtle)] mt-0.5">{formatDate(order.sold_at)}</div>
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <div className="font-mono text-sm text-zinc-100">{formatCurrency(order.sale_price)}</div>
+                    <div className="font-mono text-sm text-[var(--text)]">{formatCurrency(order.sale_price)}</div>
                     <div className={`font-mono text-xs ${order.profit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
                       {order.profit >= 0 ? '+' : ''}{formatCurrency(order.profit)}
                     </div>
@@ -135,11 +135,11 @@ export default async function DashboardPage() {
                 </div>
               ))
             ) : (
-              <div className="px-4 py-8 text-center text-zinc-600 text-sm">No sales yet</div>
+              <div className="px-4 py-8 text-center text-[var(--text-subtle)] text-sm">No sales yet</div>
             )}
           </div>
           {d.recentOrders.length > 0 && (
-            <div className="px-4 py-2 border-t border-[#27272a]">
+            <div className="px-4 py-2 border-t border-[var(--border)]">
               <Link href="/orders" className="text-xs text-[#f97316] hover:text-[#ea6c0a]">View all orders →</Link>
             </div>
           )}
@@ -148,36 +148,36 @@ export default async function DashboardPage() {
 
       {/* P&L table — desktop only */}
       {d.recentOrders.length > 0 && (
-        <div className="hidden md:block bg-[#111113] border border-[#27272a]">
-          <div className="px-4 py-3 border-b border-[#27272a] flex items-center justify-between">
-            <div className="text-xs text-zinc-500 uppercase tracking-widest">P&amp;L Breakdown</div>
+        <div className="hidden md:block bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-sm">
+          <div className="px-4 py-3 border-b border-[var(--border)] flex items-center justify-between">
+            <div className="text-xs text-[var(--text-muted)] uppercase tracking-widest">P&amp;L Breakdown</div>
             <Link href="/orders" className="text-xs text-[#f97316] hover:text-[#ea6c0a]">All orders →</Link>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-[#27272a]">
+                <tr className="border-b border-[var(--border)]">
                   {['SKU', 'Item', 'Cost', 'List', 'Sale', 'Fees', 'Net', 'Profit', 'Margin'].map((h) => (
-                    <th key={h} className="px-4 py-2 text-left text-xs text-zinc-500 uppercase tracking-widest font-normal">{h}</th>
+                    <th key={h} className="px-4 py-2 text-left text-xs text-[var(--text-muted)] uppercase tracking-widest font-normal">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#1e1e22]">
+              <tbody className="divide-y divide-[var(--border)]">
                 {d.recentOrders.map((order: any) => {
                   const item = order.inventory_items
                   return (
-                    <tr key={order.id} className="hover:bg-[#18181b] transition-colors">
-                      <td className="px-4 py-2 font-mono text-xs text-zinc-400">{item?.sku ?? '—'}</td>
-                      <td className="px-4 py-2 text-sm text-zinc-300 max-w-32 truncate">{item?.brand} {item?.description}</td>
-                      <td className="px-4 py-2 font-mono text-xs text-zinc-400">{formatCurrency(item?.cost_price ?? 0)}</td>
-                      <td className="px-4 py-2 font-mono text-xs text-zinc-400">{order.listings?.list_price ? formatCurrency(order.listings.list_price) : '—'}</td>
-                      <td className="px-4 py-2 font-mono text-xs text-zinc-200">{formatCurrency(order.sale_price)}</td>
-                      <td className="px-4 py-2 font-mono text-xs text-zinc-400">{formatCurrency(order.platform_fee + order.shipping_cost)}</td>
-                      <td className="px-4 py-2 font-mono text-xs text-zinc-200">{formatCurrency(order.net_revenue)}</td>
+                    <tr key={order.id} className="hover:bg-[var(--bg-elevated)] transition-colors">
+                      <td className="px-4 py-2 font-mono text-xs text-[var(--text-muted)]">{item?.sku ?? '—'}</td>
+                      <td className="px-4 py-2 text-sm text-[var(--text-2)] max-w-32 truncate">{item?.brand} {item?.description}</td>
+                      <td className="px-4 py-2 font-mono text-xs text-[var(--text-muted)]">{formatCurrency(item?.cost_price ?? 0)}</td>
+                      <td className="px-4 py-2 font-mono text-xs text-[var(--text-muted)]">{order.listings?.list_price ? formatCurrency(order.listings.list_price) : '—'}</td>
+                      <td className="px-4 py-2 font-mono text-xs text-[var(--text)]">{formatCurrency(order.sale_price)}</td>
+                      <td className="px-4 py-2 font-mono text-xs text-[var(--text-muted)]">{formatCurrency(order.platform_fee + order.shipping_cost)}</td>
+                      <td className="px-4 py-2 font-mono text-xs text-[var(--text)]">{formatCurrency(order.net_revenue)}</td>
                       <td className={`px-4 py-2 font-mono text-xs font-medium ${order.profit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
                         {order.profit >= 0 ? '+' : ''}{formatCurrency(order.profit)}
                       </td>
-                      <td className="px-4 py-2 font-mono text-xs text-zinc-400">{formatPercent(order.margin_percent ?? 0)}</td>
+                      <td className="px-4 py-2 font-mono text-xs text-[var(--text-muted)]">{formatPercent(order.margin_percent ?? 0)}</td>
                     </tr>
                   )
                 })}

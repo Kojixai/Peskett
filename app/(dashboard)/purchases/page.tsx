@@ -35,8 +35,8 @@ export default async function PurchasesPage() {
     <div className="p-4 md:p-6 space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-semibold text-zinc-100 uppercase tracking-widest">Purchases</h1>
-          <p className="text-xs text-zinc-500 mt-0.5">{purchases?.length ?? 0} purchase batches</p>
+          <h1 className="text-lg font-semibold text-[var(--text)] uppercase tracking-widest">Purchases</h1>
+          <p className="text-xs text-[var(--text-muted)] mt-0.5">{purchases?.length ?? 0} purchase batches</p>
         </div>
         <Link
           href="/purchases/new"
@@ -46,10 +46,10 @@ export default async function PurchasesPage() {
         </Link>
       </div>
 
-      <div className="bg-[#111113] border border-[#27272a]">
+      <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-sm">
         {!purchases || purchases.length === 0 ? (
           <div className="py-16 text-center">
-            <p className="text-zinc-600 text-sm">No purchases logged yet</p>
+            <p className="text-[var(--text-subtle)] text-sm">No purchases logged yet</p>
             <Link href="/purchases/new" className="text-[#f97316] text-sm mt-2 inline-block hover:text-[#ea6c0a]">
               Log your first purchase →
             </Link>
@@ -57,23 +57,23 @@ export default async function PurchasesPage() {
         ) : (
           <>
             {/* Mobile card view */}
-            <div className="divide-y divide-[#1e1e22] md:hidden">
+            <div className="divide-y divide-[var(--border)] md:hidden">
               {purchases.map((p) => (
                 <div key={p.id} className="p-4 space-y-2">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <div className="font-mono text-xs text-zinc-300">{formatDate(p.purchase_date)}</div>
-                      <div className="text-xs text-zinc-500 mt-0.5">{sourceLabels[p.source] ?? p.source}</div>
+                      <div className="font-mono text-xs text-[var(--text-2)]">{formatDate(p.purchase_date)}</div>
+                      <div className="text-xs text-[var(--text-muted)] mt-0.5">{sourceLabels[p.source] ?? p.source}</div>
                     </div>
                     <div className="text-right">
-                      <div className="font-mono text-sm text-zinc-100">{formatCurrency(p.total_cost)}</div>
-                      <div className="font-mono text-xs text-zinc-500 mt-0.5">
+                      <div className="font-mono text-sm text-[var(--text)]">{formatCurrency(p.total_cost)}</div>
+                      <div className="font-mono text-xs text-[var(--text-muted)] mt-0.5">
                         {p.item_count} items · {formatCurrency(p.total_cost / p.item_count)}/ea
                       </div>
                     </div>
                   </div>
                   {p.notes && (
-                    <div className="text-xs text-zinc-500 truncate">{p.notes}</div>
+                    <div className="text-xs text-[var(--text-muted)] truncate">{p.notes}</div>
                   )}
                   <Link
                     href={`/inventory?purchase=${p.id}`}
@@ -89,30 +89,30 @@ export default async function PurchasesPage() {
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-[#27272a]">
+                  <tr className="border-b border-[var(--border)]">
                     {['Date', 'Source', 'Items', 'Total Cost', 'Cost/Item', 'Notes', 'SKUs'].map((h) => (
                       <th
                         key={h}
-                        className="px-4 py-2.5 text-left text-xs text-zinc-500 uppercase tracking-widest font-normal"
+                        className="px-4 py-2.5 text-left text-xs text-[var(--text-muted)] uppercase tracking-widest font-normal"
                       >
                         {h}
                       </th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#1e1e22]">
+                <tbody className="divide-y divide-[var(--border)]">
                   {purchases.map((p) => (
-                    <tr key={p.id} className="hover:bg-[#18181b] transition-colors">
-                      <td className="px-4 py-3 font-mono text-xs text-zinc-300">{formatDate(p.purchase_date)}</td>
+                    <tr key={p.id} className="hover:bg-[var(--bg-elevated)] transition-colors">
+                      <td className="px-4 py-3 font-mono text-xs text-[var(--text-2)]">{formatDate(p.purchase_date)}</td>
                       <td className="px-4 py-3">
-                        <span className="text-xs text-zinc-400">{sourceLabels[p.source] ?? p.source}</span>
+                        <span className="text-xs text-[var(--text-muted)]">{sourceLabels[p.source] ?? p.source}</span>
                       </td>
-                      <td className="px-4 py-3 font-mono text-xs text-zinc-300">{p.item_count}</td>
-                      <td className="px-4 py-3 font-mono text-sm text-zinc-100">{formatCurrency(p.total_cost)}</td>
-                      <td className="px-4 py-3 font-mono text-xs text-zinc-400">
+                      <td className="px-4 py-3 font-mono text-xs text-[var(--text-2)]">{p.item_count}</td>
+                      <td className="px-4 py-3 font-mono text-sm text-[var(--text)]">{formatCurrency(p.total_cost)}</td>
+                      <td className="px-4 py-3 font-mono text-xs text-[var(--text-muted)]">
                         {formatCurrency(p.total_cost / p.item_count)}
                       </td>
-                      <td className="px-4 py-3 text-sm text-zinc-500 max-w-48 truncate">{p.notes ?? '—'}</td>
+                      <td className="px-4 py-3 text-sm text-[var(--text-muted)] max-w-48 truncate">{p.notes ?? '—'}</td>
                       <td className="px-4 py-3">
                         <Link
                           href={`/inventory?purchase=${p.id}`}

@@ -61,13 +61,13 @@ export default async function InventoryPage({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-semibold text-zinc-100 uppercase tracking-widest">Inventory</h1>
-          <p className="text-xs text-zinc-500 mt-0.5">{items?.length ?? 0} items</p>
+          <h1 className="text-lg font-semibold text-[var(--text)] uppercase tracking-widest">Inventory</h1>
+          <p className="text-xs text-[var(--text-muted)] mt-0.5">{items?.length ?? 0} items</p>
         </div>
         <div className="flex items-center gap-2">
           <Link
             href="/purchases/new"
-            className="hidden sm:inline-flex items-center gap-2 bg-[#18181b] hover:bg-[#27272a] border border-[#27272a] text-zinc-300 text-xs font-semibold uppercase tracking-widest px-3 py-2 transition-colors"
+            className="hidden sm:inline-flex items-center gap-2 bg-[var(--bg-elevated)] hover:bg-[var(--bg-elevated)] border border-[var(--border)] text-[var(--text-2)] text-xs font-semibold uppercase tracking-widest px-3 py-2 transition-colors"
           >
             Log Purchase
           </Link>
@@ -90,9 +90,9 @@ export default async function InventoryPage({
               href={`/inventory?status=${s.value}${params.q ? `&q=${params.q}` : ''}`}
               className={`px-3 py-1.5 text-xs uppercase tracking-widest border-r last:border-r-0 transition-colors ${
                 activeStatus === s.value
-                  ? 'bg-[#18181b] text-zinc-100 border-[#27272a]'
-                  : 'bg-transparent text-zinc-500 hover:text-zinc-300 border-[#27272a]'
-              } border border-[#27272a]`}
+                  ? 'bg-[var(--bg-elevated)] text-[var(--text)] border-[var(--border)]'
+                  : 'bg-transparent text-[var(--text-muted)] hover:text-[var(--text-2)] border-[var(--border)]'
+              } border border-[var(--border)]`}
             >
               {s.label}
             </Link>
@@ -108,11 +108,11 @@ export default async function InventoryPage({
             name="q"
             defaultValue={params.q ?? ''}
             placeholder="Search SKU, brand..."
-            className="bg-[#111113] border border-[#27272a] px-3 py-1.5 text-sm text-zinc-100 placeholder-zinc-600 flex-1 sm:w-56 focus:outline-none focus:border-[#f97316] transition-colors"
+            className="bg-[var(--bg-card)] border border-[var(--border)] px-3 py-1.5 text-sm text-[var(--text)] placeholder-[var(--text-subtle)] flex-1 sm:w-56 focus:outline-none focus:border-[#f97316] transition-colors"
           />
           <button
             type="submit"
-            className="bg-[#18181b] border border-l-0 border-[#27272a] px-3 py-1.5 text-xs text-zinc-400 hover:text-zinc-200 uppercase tracking-widest transition-colors"
+            className="bg-[var(--bg-elevated)] border border-l-0 border-[var(--border)] px-3 py-1.5 text-xs text-[var(--text-muted)] hover:text-[var(--text)] uppercase tracking-widest transition-colors"
           >
             Go
           </button>
@@ -121,22 +121,32 @@ export default async function InventoryPage({
 
       {/* Inventory grid */}
       {!items || items.length === 0 ? (
-        <div className="border border-[#27272a] py-16 text-center">
-          <p className="text-zinc-600 text-sm">No items found</p>
+        <div className="border border-[var(--border)] py-16 text-center">
+          <p className="text-[var(--text-subtle)] text-sm">No items found</p>
           <Link href="/purchases/new" className="text-[#f97316] text-sm mt-2 inline-block hover:text-[#ea6c0a]">
             Log a purchase to get started →
           </Link>
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-          {items.map((item) => (
+          {items.map((item, idx) => {
+            const colors = [
+              'bg-orange-50 dark:bg-orange-950/20',
+              'bg-purple-50 dark:bg-purple-950/20',
+              'bg-emerald-50 dark:bg-emerald-950/20',
+              'bg-blue-50 dark:bg-blue-950/20',
+              'bg-rose-50 dark:bg-rose-950/20',
+              'bg-violet-50 dark:bg-violet-950/20',
+            ]
+            const cardColor = colors[idx % colors.length]
+            return (
             <Link
               key={item.id}
               href={`/inventory/${item.id}`}
-              className="bg-[#111113] border border-[#27272a] hover:border-[#3f3f46] transition-colors group"
+              className={`${cardColor} border border-[var(--border)] hover:border-[var(--border-strong)] hover:shadow-md transition-all rounded-2xl overflow-hidden group`}
             >
               {/* Photo */}
-              <div className="aspect-square bg-[#18181b] overflow-hidden relative">
+              <div className="aspect-square bg-black/5 overflow-hidden relative">
                 {item.photos && item.photos.length > 0 ? (
                   <Image
                     src={item.photos[0]}
@@ -146,7 +156,7 @@ export default async function InventoryPage({
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <span className="text-zinc-700 text-xs font-mono">NO PHOTO</span>
+                    <span className="text-[var(--text-subtle)] text-xs font-mono">NO PHOTO</span>
                   </div>
                 )}
                 <div className="absolute top-2 left-2">
@@ -156,33 +166,34 @@ export default async function InventoryPage({
 
               {/* Info */}
               <div className="p-3 space-y-2">
-                <div className="font-mono text-xs text-zinc-500">{item.sku}</div>
-                <div className="text-sm text-zinc-200 leading-tight">
+                <div className="font-mono text-xs text-[var(--text-muted)]">{item.sku}</div>
+                <div className="text-sm text-[var(--text)] leading-tight">
                   {item.brand && <span className="font-medium">{item.brand} </span>}
                   {item.description}
                 </div>
                 <div className="flex items-center justify-between">
-                  <div className="text-xs text-zinc-500">
+                  <div className="text-xs text-[var(--text-muted)]">
                     {item.size && <span>{item.size}</span>}
                     {item.condition && (
-                      <span className="ml-1 text-zinc-600">· {item.condition}</span>
+                      <span className="ml-1 text-[var(--text-subtle)]">· {item.condition}</span>
                     )}
                   </div>
                 </div>
-                <div className="flex items-center justify-between pt-1 border-t border-[#1e1e22]">
-                  <span className="font-mono text-xs text-zinc-500">Cost</span>
-                  <span className="font-mono text-sm text-zinc-200">
+                <div className="flex items-center justify-between pt-1 border-t border-[var(--border)]">
+                  <span className="font-mono text-xs text-[var(--text-muted)]">Cost</span>
+                  <span className="font-mono text-sm text-[var(--text)]">
                     {formatCurrency(item.cost_price)}
                   </span>
                 </div>
                 {item.storage_location && (
-                  <div className="font-mono text-xs text-zinc-600 bg-[#18181b] px-2 py-1 truncate">
+                  <div className="font-mono text-xs text-[var(--text-subtle)] bg-[var(--bg-elevated)] px-2 py-1 truncate">
                     📦 {item.storage_location}
                   </div>
                 )}
               </div>
             </Link>
-          ))}
+            )
+          })}
         </div>
       )}
     </div>

@@ -178,24 +178,24 @@ export default function NewPurchasePage() {
   if (step === 'skus') {
     return (
       <div className="p-6 max-w-4xl space-y-6">
-        <div className="flex items-center gap-2 text-xs text-zinc-500">
-          <Link href="/purchases" className="hover:text-zinc-300">Purchases</Link>
+        <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
+          <Link href="/purchases" className="hover:text-[var(--text-2)]">Purchases</Link>
           <span>/</span>
           <span>New</span>
           <span>/</span>
-          <span className="text-zinc-300">Add SKUs</span>
+          <span className="text-[var(--text-2)]">Add SKUs</span>
         </div>
 
         <div>
-          <h1 className="text-lg font-semibold text-zinc-100 uppercase tracking-widest">Add Item Details</h1>
-          <p className="text-xs text-zinc-500 mt-0.5">{skus.length} item{skus.length !== 1 ? 's' : ''} — cost per item: £{(parseFloat(totalCost) / skus.length).toFixed(2)}</p>
+          <h1 className="text-lg font-semibold text-[var(--text)] uppercase tracking-widest">Add Item Details</h1>
+          <p className="text-xs text-[var(--text-muted)] mt-0.5">{skus.length} item{skus.length !== 1 ? 's' : ''} — cost per item: £{(parseFloat(totalCost) / skus.length).toFixed(2)}</p>
         </div>
 
         <form onSubmit={handleSkusSubmit} className="space-y-4">
           {skus.map((sku, i) => (
-            <div key={i} className="bg-[#111113] border border-[#27272a] p-4 space-y-4">
+            <div key={i} className="bg-[var(--bg-card)] border border-[var(--border)] p-4 space-y-4">
               <div className="flex items-center justify-between">
-                <div className="text-xs text-zinc-400 uppercase tracking-widest font-mono">Item {i + 1}</div>
+                <div className="text-xs text-[var(--text-muted)] uppercase tracking-widest font-mono">Item {i + 1}</div>
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -266,7 +266,7 @@ export default function NewPurchasePage() {
                       key={field}
                       type="button"
                       onClick={() => copyToAll(i, field)}
-                      className="text-xs text-zinc-500 hover:text-[#f97316] transition-colors"
+                      className="text-xs text-[var(--text-muted)] hover:text-[#f97316] transition-colors"
                     >
                       Copy {field.replace('_', ' ')} to all
                     </button>
@@ -301,13 +301,13 @@ export default function NewPurchasePage() {
 
   return (
     <div className="p-6 max-w-xl space-y-6">
-      <div className="flex items-center gap-2 text-xs text-zinc-500">
-        <Link href="/purchases" className="hover:text-zinc-300">Purchases</Link>
+      <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
+        <Link href="/purchases" className="hover:text-[var(--text-2)]">Purchases</Link>
         <span>/</span>
-        <span className="text-zinc-300">New Purchase</span>
+        <span className="text-[var(--text-2)]">New Purchase</span>
       </div>
 
-      <h1 className="text-lg font-semibold text-zinc-100 uppercase tracking-widest">Log Purchase</h1>
+      <h1 className="text-lg font-semibold text-[var(--text)] uppercase tracking-widest">Log Purchase</h1>
 
       <form onSubmit={handlePurchaseSubmit} className="space-y-4">
         <Select
@@ -375,8 +375,8 @@ export default function NewPurchasePage() {
         </div>
 
         {totalCost && itemCount && (
-          <div className="bg-[#18181b] border border-[#27272a] px-4 py-2 flex items-center justify-between">
-            <span className="text-xs text-zinc-500">Cost per item</span>
+          <div className="bg-[var(--bg-elevated)] border border-[var(--border)] px-4 py-2 flex items-center justify-between">
+            <span className="text-xs text-[var(--text-muted)]">Cost per item</span>
             <span className="font-mono text-sm text-[#f97316]">
               £{(parseFloat(totalCost) / parseInt(itemCount)).toFixed(2)}
             </span>

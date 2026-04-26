@@ -32,19 +32,19 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#09090b] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[var(--bg-main)] flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="mb-8">
           <div className="text-[#f97316] font-mono text-2xl font-bold tracking-wider">
-            FLIP<span className="text-zinc-100">OS</span>
+            FLIP<span className="text-[var(--text)]">OS</span>
           </div>
-          <p className="text-zinc-500 text-sm mt-1">Reseller Command Centre</p>
+          <p className="text-[var(--text-muted)] text-sm mt-1">Reseller Command Centre</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-xs text-zinc-400 uppercase tracking-widest mb-2">
+            <label className="block text-xs text-[var(--text-muted)] uppercase tracking-widest mb-2">
               Email
             </label>
             <input
@@ -52,13 +52,13 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full bg-[#111113] border border-[#27272a] px-3 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-[#f97316] transition-colors"
+              className="w-full bg-[var(--bg-card)] border border-[var(--border)] px-3 py-2.5 text-sm text-[var(--text)] placeholder-[var(--text-subtle)] focus:outline-none focus:border-[#f97316] transition-colors"
               placeholder="you@example.com"
             />
           </div>
 
           <div>
-            <label className="block text-xs text-zinc-400 uppercase tracking-widest mb-2">
+            <label className="block text-xs text-[var(--text-muted)] uppercase tracking-widest mb-2">
               Password
             </label>
             <input
@@ -66,7 +66,7 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full bg-[#111113] border border-[#27272a] px-3 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-[#f97316] transition-colors"
+              className="w-full bg-[var(--bg-card)] border border-[var(--border)] px-3 py-2.5 text-sm text-[var(--text)] placeholder-[var(--text-subtle)] focus:outline-none focus:border-[#f97316] transition-colors"
               placeholder="••••••••"
             />
           </div>

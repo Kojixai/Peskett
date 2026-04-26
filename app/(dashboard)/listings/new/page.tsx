@@ -37,7 +37,7 @@ const CATEGORIES = [
 
 export default function NewListingPage() {
   return (
-    <Suspense fallback={<div className="p-6 text-zinc-500 text-sm">Loading...</div>}>
+    <Suspense fallback={<div className="p-6 text-[var(--text-muted)] text-sm">Loading...</div>}>
       <NewListingPageContent />
     </Suspense>
   )
@@ -217,7 +217,7 @@ function NewListingPageContent() {
     <div className="p-4 md:p-6 max-w-xl space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-semibold text-zinc-100 uppercase tracking-widest">New Listing</h1>
+          <h1 className="text-lg font-semibold text-[var(--text)] uppercase tracking-widest">New Listing</h1>
           <div className="flex items-center gap-1 mt-1">
             {[1, 2, 3, 4].map((s) => (
               <div
@@ -235,7 +235,7 @@ function NewListingPageContent() {
       {/* Step 1: Photos */}
       {step === 1 && (
         <div className="space-y-4">
-          <h2 className="text-sm font-medium text-zinc-300 uppercase tracking-widest">Step 1 — Photos</h2>
+          <h2 className="text-sm font-medium text-[var(--text-2)] uppercase tracking-widest">Step 1 — Photos</h2>
 
           <input
             ref={fileInputRef}
@@ -250,17 +250,17 @@ function NewListingPageContent() {
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="w-full aspect-video bg-[#111113] border-2 border-dashed border-[#27272a] hover:border-[#f97316] flex flex-col items-center justify-center gap-3 transition-colors"
+            className="w-full aspect-video bg-[var(--bg-card)] border-2 border-dashed border-[var(--border)] hover:border-[#f97316] flex flex-col items-center justify-center gap-3 transition-colors"
           >
             <CameraIcon />
-            <span className="text-sm text-zinc-500">Tap to add photos</span>
-            <span className="text-xs text-zinc-600">Up to 8 photos · Camera or gallery</span>
+            <span className="text-sm text-[var(--text-muted)]">Tap to add photos</span>
+            <span className="text-xs text-[var(--text-subtle)]">Up to 8 photos · Camera or gallery</span>
           </button>
 
           {photoUrls.length > 0 && (
             <div className="grid grid-cols-4 gap-2">
               {photoUrls.map((url, i) => (
-                <div key={i} className="aspect-square bg-[#18181b] relative overflow-hidden">
+                <div key={i} className="aspect-square bg-[var(--bg-elevated)] relative overflow-hidden">
                   <Image src={url} alt={`Photo ${i + 1}`} fill className="object-cover" />
                 </div>
               ))}
@@ -280,7 +280,7 @@ function NewListingPageContent() {
       {/* Step 2: Item details */}
       {step === 2 && (
         <div className="space-y-4">
-          <h2 className="text-sm font-medium text-zinc-300 uppercase tracking-widest">Step 2 — Item Details</h2>
+          <h2 className="text-sm font-medium text-[var(--text-2)] uppercase tracking-widest">Step 2 — Item Details</h2>
 
           {inventoryItems.length > 0 && (
             <Select
@@ -366,7 +366,7 @@ function NewListingPageContent() {
             <div className="border border-red-900 bg-red-950/30 px-3 py-2 text-sm text-red-400">{error}</div>
           )}
 
-          <button onClick={() => setStep(1)} className="text-xs text-zinc-500 hover:text-zinc-300">
+          <button onClick={() => setStep(1)} className="text-xs text-[var(--text-muted)] hover:text-[var(--text-2)]">
             ← Back
           </button>
         </div>
@@ -375,7 +375,7 @@ function NewListingPageContent() {
       {/* Step 3: Review description */}
       {step === 3 && (
         <div className="space-y-4">
-          <h2 className="text-sm font-medium text-zinc-300 uppercase tracking-widest">Step 3 — Review Description</h2>
+          <h2 className="text-sm font-medium text-[var(--text-2)] uppercase tracking-widest">Step 3 — Review Description</h2>
 
           <Textarea
             label="Listing Description"
@@ -397,7 +397,7 @@ function NewListingPageContent() {
             </Button>
           </div>
 
-          <button onClick={() => setStep(2)} className="text-xs text-zinc-500 hover:text-zinc-300">
+          <button onClick={() => setStep(2)} className="text-xs text-[var(--text-muted)] hover:text-[var(--text-2)]">
             ← Back
           </button>
         </div>
@@ -406,7 +406,7 @@ function NewListingPageContent() {
       {/* Step 4: Publish */}
       {step === 4 && (
         <div className="space-y-4">
-          <h2 className="text-sm font-medium text-zinc-300 uppercase tracking-widest">Step 4 — Publish</h2>
+          <h2 className="text-sm font-medium text-[var(--text-2)] uppercase tracking-widest">Step 4 — Publish</h2>
 
           <div className="space-y-2">
             {[
@@ -419,7 +419,7 @@ function NewListingPageContent() {
                 className={`flex items-center gap-3 p-3 border cursor-pointer transition-colors ${
                   publishMode === opt.value
                     ? 'border-[#f97316] bg-[#431407]/20'
-                    : 'border-[#27272a] bg-[#111113] hover:border-[#3f3f46]'
+                    : 'border-[var(--border)] bg-[var(--bg-card)] hover:border-[var(--border-strong)]'
                 }`}
               >
                 <input
@@ -431,8 +431,8 @@ function NewListingPageContent() {
                   className="accent-[#f97316]"
                 />
                 <div>
-                  <div className="text-sm text-zinc-200">{opt.label}</div>
-                  <div className="text-xs text-zinc-500">{opt.sub}</div>
+                  <div className="text-sm text-[var(--text)]">{opt.label}</div>
+                  <div className="text-xs text-[var(--text-muted)]">{opt.sub}</div>
                 </div>
               </label>
             ))}
@@ -449,8 +449,8 @@ function NewListingPageContent() {
           )}
 
           {/* Summary */}
-          <div className="bg-[#111113] border border-[#27272a] p-4 space-y-2">
-            <div className="text-xs text-zinc-500 uppercase tracking-widest mb-2">Summary</div>
+          <div className="bg-[var(--bg-card)] border border-[var(--border)] p-4 space-y-2">
+            <div className="text-xs text-[var(--text-muted)] uppercase tracking-widest mb-2">Summary</div>
             {[
               ['Brand', brand],
               ['Category', category],
@@ -460,8 +460,8 @@ function NewListingPageContent() {
               ['Photos', `${photoUrls.length} photo${photoUrls.length !== 1 ? 's' : ''}`],
             ].map(([k, v]) => (
               <div key={k} className="flex justify-between text-sm">
-                <span className="text-zinc-500">{k}</span>
-                <span className="font-mono text-zinc-200">{v}</span>
+                <span className="text-[var(--text-muted)]">{k}</span>
+                <span className="font-mono text-[var(--text)]">{v}</span>
               </div>
             ))}
           </div>
@@ -485,7 +485,7 @@ function NewListingPageContent() {
               : 'Save Draft'}
           </Button>
 
-          <button onClick={() => setStep(3)} className="text-xs text-zinc-500 hover:text-zinc-300">
+          <button onClick={() => setStep(3)} className="text-xs text-[var(--text-muted)] hover:text-[var(--text-2)]">
             ← Back
           </button>
         </div>
@@ -496,7 +496,7 @@ function NewListingPageContent() {
 
 function CameraIcon() {
   return (
-    <svg className="w-8 h-8 text-zinc-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+    <svg className="w-8 h-8 text-[var(--text-subtle)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
       <path strokeLinecap="square" strokeLinejoin="miter" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
       <path strokeLinecap="square" strokeLinejoin="miter" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
     </svg>

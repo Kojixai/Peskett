@@ -35,8 +35,8 @@ export default async function ListingsPage() {
     <div className="p-4 md:p-6 space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-semibold text-zinc-100 uppercase tracking-widest">Listings</h1>
-          <p className="text-xs text-zinc-500 mt-0.5">{listings?.length ?? 0} total</p>
+          <h1 className="text-lg font-semibold text-[var(--text)] uppercase tracking-widest">Listings</h1>
+          <p className="text-xs text-[var(--text-muted)] mt-0.5">{listings?.length ?? 0} total</p>
         </div>
         <Link
           href="/listings/new"
@@ -49,33 +49,33 @@ export default async function ListingsPage() {
       {/* Status sections */}
       {Object.entries(grouped).map(([status, items]) =>
         items.length > 0 ? (
-          <div key={status} className="bg-[#111113] border border-[#27272a]">
-            <div className="px-4 py-2.5 border-b border-[#27272a] flex items-center gap-3">
-              <span className="text-xs text-zinc-500 uppercase tracking-widest">{status}</span>
+          <div key={status} className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-sm">
+            <div className="px-4 py-2.5 border-b border-[var(--border)] flex items-center gap-3">
+              <span className="text-xs text-[var(--text-muted)] uppercase tracking-widest">{status}</span>
               <Badge status={status}>{items.length}</Badge>
             </div>
 
             {/* Mobile card view */}
-            <div className="divide-y divide-[#1e1e22] md:hidden">
+            <div className="divide-y divide-[var(--border)] md:hidden">
               {items.map((listing: any) => {
                 const item = listing.inventory_items
                 return (
                   <div key={listing.id} className="p-4 space-y-2">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <div className="font-mono text-xs text-zinc-500">{item?.sku ?? '—'}</div>
-                        <div className="text-sm text-zinc-200 truncate mt-0.5">
+                        <div className="font-mono text-xs text-[var(--text-muted)]">{item?.sku ?? '—'}</div>
+                        <div className="text-sm text-[var(--text)] truncate mt-0.5">
                           {item?.brand && <span className="font-medium">{item.brand} </span>}
                           {item?.description}
                         </div>
                       </div>
-                      <div className="font-mono text-sm text-zinc-100 flex-shrink-0">
+                      <div className="font-mono text-sm text-[var(--text)] flex-shrink-0">
                         {formatCurrency(listing.list_price)}
                       </div>
                     </div>
                     <div className="flex items-center gap-2 flex-wrap">
                       <Badge variant="muted">{listing.platform}</Badge>
-                      <span className="text-xs text-zinc-600">
+                      <span className="text-xs text-[var(--text-subtle)]">
                         {listing.scheduled_at
                           ? formatDateTime(listing.scheduled_at)
                           : listing.listed_at
@@ -85,7 +85,7 @@ export default async function ListingsPage() {
                     </div>
                     <Link
                       href={`/inventory/${listing.sku_id}`}
-                      className="text-xs text-zinc-500 hover:text-zinc-300"
+                      className="text-xs text-[var(--text-muted)] hover:text-[var(--text-2)]"
                     >
                       View item →
                     </Link>
@@ -98,29 +98,29 @@ export default async function ListingsPage() {
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-[#1e1e22]">
+                  <tr className="border-b border-[var(--border)]">
                     {['SKU', 'Item', 'Platform', 'List Price', status === 'scheduled' ? 'Scheduled' : 'Listed', 'Actions'].map((h) => (
-                      <th key={h} className="px-4 py-2 text-left text-xs text-zinc-600 uppercase tracking-widest font-normal">
+                      <th key={h} className="px-4 py-2 text-left text-xs text-[var(--text-subtle)] uppercase tracking-widest font-normal">
                         {h}
                       </th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#1e1e22]">
+                <tbody className="divide-y divide-[var(--border)]">
                   {items.map((listing: any) => {
                     const item = listing.inventory_items
                     return (
-                      <tr key={listing.id} className="hover:bg-[#18181b] transition-colors">
-                        <td className="px-4 py-2.5 font-mono text-xs text-zinc-400">{item?.sku ?? '—'}</td>
-                        <td className="px-4 py-2.5 text-sm text-zinc-300">
+                      <tr key={listing.id} className="hover:bg-[var(--bg-elevated)] transition-colors">
+                        <td className="px-4 py-2.5 font-mono text-xs text-[var(--text-muted)]">{item?.sku ?? '—'}</td>
+                        <td className="px-4 py-2.5 text-sm text-[var(--text-2)]">
                           {item?.brand && <span className="font-medium">{item.brand} </span>}
                           {item?.description}
                         </td>
                         <td className="px-4 py-2.5">
                           <Badge variant="muted">{listing.platform}</Badge>
                         </td>
-                        <td className="px-4 py-2.5 font-mono text-sm text-zinc-100">{formatCurrency(listing.list_price)}</td>
-                        <td className="px-4 py-2.5 font-mono text-xs text-zinc-500">
+                        <td className="px-4 py-2.5 font-mono text-sm text-[var(--text)]">{formatCurrency(listing.list_price)}</td>
+                        <td className="px-4 py-2.5 font-mono text-xs text-[var(--text-muted)]">
                           {listing.scheduled_at
                             ? formatDateTime(listing.scheduled_at)
                             : listing.listed_at
@@ -131,12 +131,12 @@ export default async function ListingsPage() {
                           <div className="flex items-center gap-3">
                             <Link
                               href={`/inventory/${listing.sku_id}`}
-                              className="text-xs text-zinc-500 hover:text-zinc-300"
+                              className="text-xs text-[var(--text-muted)] hover:text-[var(--text-2)]"
                             >
                               View item
                             </Link>
                             {listing.vinted_item_id && (
-                              <span className="font-mono text-xs text-zinc-600">
+                              <span className="font-mono text-xs text-[var(--text-subtle)]">
                                 #{listing.vinted_item_id}
                               </span>
                             )}
@@ -153,8 +153,8 @@ export default async function ListingsPage() {
       )}
 
       {(!listings || listings.length === 0) && (
-        <div className="border border-[#27272a] py-16 text-center">
-          <p className="text-zinc-600 text-sm">No listings yet</p>
+        <div className="border border-[var(--border)] py-16 text-center">
+          <p className="text-[var(--text-subtle)] text-sm">No listings yet</p>
           <Link href="/listings/new" className="text-[#f97316] text-sm mt-2 inline-block hover:text-[#ea6c0a]">
             Create your first listing →
           </Link>

@@ -1,6 +1,7 @@
 import type { Config } from 'tailwindcss'
 
 const config: Config = {
+  darkMode: 'class',
   content: [
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -9,22 +10,9 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        bg: {
-          DEFAULT: '#09090b',
-          card: '#111113',
-          elevated: '#18181b',
-        },
-        border: {
-          DEFAULT: '#27272a',
-          strong: '#3f3f46',
-        },
         accent: {
           DEFAULT: '#f97316',
           hover: '#ea6c0a',
-          muted: '#431407',
-        },
-        zinc: {
-          950: '#09090b',
         },
       },
       fontFamily: {
@@ -32,12 +20,13 @@ const config: Config = {
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       borderRadius: {
-        DEFAULT: '0px',
-        sm: '0px',
-        md: '0px',
-        lg: '0px',
-        xl: '0px',
-        '2xl': '0px',
+        DEFAULT: '10px',
+        sm: '6px',
+        md: '10px',
+        lg: '14px',
+        xl: '18px',
+        '2xl': '24px',
+        '3xl': '32px',
         full: '9999px',
       },
     },
