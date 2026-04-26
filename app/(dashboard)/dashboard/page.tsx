@@ -3,7 +3,7 @@ import { RevenueChart } from '@/components/dashboard/revenue-chart'
 import { formatCurrency, formatPercent } from '@/lib/utils'
 import type { RevenueDataPoint } from '@/lib/types'
 import Link from 'next/link'
-import { startOfMonth } from 'date-fns'
+import { format, startOfMonth } from 'date-fns'
 
 export const dynamic = 'force-dynamic'
 

@@ -195,6 +195,74 @@ export default function SettingsPage() {
         </div>
         <p className="text-xs text-[var(--text-subtle)]">Configure API keys in your <code className="font-mono bg-[var(--bg-elevated)] px-1">.env.local</code> file.</p>
       </section>
+
+      {/* Changelog */}
+      <section className="space-y-4">
+        <h2 className="text-sm text-[var(--text-2)] uppercase tracking-widest">Versions</h2>
+        <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl divide-y divide-[var(--border)]">
+          {CHANGELOG.map((entry) => (
+            <div key={entry.version} className="px-4 py-3">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-sm font-semibold text-[var(--text)]">{entry.version}</span>
+                <span className="font-mono text-[10px] text-[var(--text-subtle)]">{entry.date}</span>
+              </div>
+              <ul className="space-y-0.5">
+                {entry.changes.map((c, i) => (
+                  <li key={i} className="text-xs text-[var(--text-muted)] flex gap-2">
+                    <span className="text-[#f97316] flex-shrink-0">·</span>
+                    <span>{c}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   )
 }
+
+const CHANGELOG = [
+  {
+    version: 'v0.4',
+    date: '26 Apr 2025 · 20:30',
+    changes: [
+      'Replaced top/side navbar with fixed bottom nav (Dashboard, Inventory, Purchases, Orders, Settings)',
+      'Removed demo banner, page title and date from dashboard for cleaner mobile view',
+      'Added Appearance section to Settings with light/dark mode toggle',
+      'Added Versions changelog to Settings',
+      'iOS safe-area inset support for bottom nav',
+    ],
+  },
+  {
+    version: 'v0.3',
+    date: '26 Apr 2025 · 18:00',
+    changes: [
+      'Full light/dark theme system with CSS variables and localStorage persistence',
+      'Pastel KPI cards with 3-column grid on mobile, 4 on desktop',
+      'Revenue chart moved to top of dashboard, halved in height',
+      'Poppins font + JetBrains Mono for data',
+      'Icon-only dark sidebar for desktop',
+    ],
+  },
+  {
+    version: 'v0.2',
+    date: '26 Apr 2025 · 14:00',
+    changes: [
+      'Mobile-responsive layouts with card/table dual-render pattern',
+      'Inventory, Purchases and Orders pages all responsive',
+      'Fixed Vercel deployment (removed standalone output mode)',
+    ],
+  },
+  {
+    version: 'v0.1',
+    date: '25 Apr 2025',
+    changes: [
+      'Initial dashboard with KPI cards, revenue chart and P&L table',
+      'Inventory, Purchases, Orders, Listings and Settings pages',
+      'Supabase integration with demo mode fallback',
+      'Starling Bank balance widget',
+      'Smart offer rules engine',
+    ],
+  },
+]
