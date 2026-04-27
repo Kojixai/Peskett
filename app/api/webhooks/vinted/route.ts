@@ -1,71 +1,84 @@
-import { NextResponse } from 'next/server'
-import { createServiceClient } from '@/lib/supabase/server'
-import { createHmac, timingSafeEqual } from 'crypto'
+import { NextRequest, NextResponse } from 'next/server'
+import { verifyVintedWebhook } from '@/lib/vinted'
+import { getConfig } from '@/lib/config'
+import { createClient } from '@/lib/supabase/server'
 
-function verifySignature(body: string, signature: string): boolean {
-  const secret = process.env.VINTED_PRO_HMAC_SECRET
-  if (!secret) return false
-  const expected = createHmac('sha256', secret).update(body).digest('hex')
-  try {
-    return timingSafeEqual(Buffer.from(expected), Buffer.from(signature))
-  } catch {
-    return false
-  }
-}
+/**
+ * POST /api/webhooks/vinted
+ * Receives Vinted Pro Integrations (VPI) webhook events.
+ * Register this URL in the Vinted Pro portal.
+ */
+export async function POST(req: NextRequest) {
+  const rawBody = await req.text()
+  const sigHeader = req.headers.get('x-vpi-webhook-hmac-sha256') ?? ''
 
-export async function POST(request: Request) {
-  const rawBody = await request.text()
-  const signature = request.headers.get('x-vinted-signature') ?? ''
-
-  if (!verifySignature(rawBody, signature)) {
+  const webhookSigningKey = await getConfig('VINTED_WEBHOOK_SIGNING_KEY')
+  if (webhookSigningKey && !verifyVintedWebhook(webhookSigningKey, rawBody, sigHeader)) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
   }
 
-  const event = JSON.parse(rawBody)
-  const supabase = await createServiceClient()
+  let event: any
+  try { event = JSON.parse(rawBody) } catch {
+    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
+  }
 
-  // Handle order events
-  if (event.type === 'order.created' || event.type === 'order.paid') {
-    const order = event.data
-    const vintedOrderId = String(order.id)
+  const supabase = await createClient()
+  const eventType: string = event.event_type ?? event.type ?? ''
 
-    // Find the listing
-    const { data: listing } = await supabase
-      .from('listings')
-      .select('id, sku_id, list_price')
-      .eq('vinted_item_id', String(order.item_id))
-      .single()
+  switch (eventType) {
+    case 'ORDER_CREATED': {
+      const order = event.order ?? event.data
+      if (!order) break
 
-    if (listing) {
-      const { data: item } = await supabase
-        .from('inventory_items')
-        .select('cost_price')
-        .eq('id', listing.sku_id)
+      const { data: listing } = await supabase
+        .from('listings')
+        .select('id, sku_id, list_price')
+        .eq('vinted_item_id', String(order.item_id ?? order.items?.[0]?.id))
         .single()
 
-      const costPrice = item?.cost_price ?? 0
-      const salePrice = parseFloat(order.total_item_price ?? 0)
-      const platformFee = parseFloat(order.service_fee ?? 0)
-      const shippingCost = parseFloat(order.shipment_price ?? 0)
-      const netRevenue = salePrice - platformFee - shippingCost
-      const profit = netRevenue - costPrice
+      const salePrice    = (order.total_price ?? order.price ?? 0) / 100
+      const platformFee  = (order.service_fee ?? 0) / 100
+      const shippingCost = (order.shipping_cost ?? 0) / 100
+      const netRevenue   = salePrice - platformFee - shippingCost
+
+      let costPrice = 0
+      if (listing?.sku_id) {
+        const { data: item } = await supabase.from('inventory_items').select('cost_price').eq('id', listing.sku_id).single()
+        costPrice = item?.cost_price ?? 0
+      }
+
+      const profit        = netRevenue - costPrice
       const marginPercent = salePrice > 0 ? (profit / salePrice) * 100 : 0
 
       await supabase.from('orders').upsert({
-        vinted_order_id: vintedOrderId,
-        listing_id: listing.id,
-        sku_id: listing.sku_id,
-        sale_price: salePrice,
-        platform_fee: platformFee,
-        shipping_cost: shippingCost,
+        vinted_order_id: String(order.id),
+        listing_id:      listing?.id ?? null,
+        sku_id:          listing?.sku_id ?? null,
+        sale_price:      salePrice,
+        platform_fee:    platformFee,
+        shipping_cost:   shippingCost,
+        net_revenue:     netRevenue,
         profit,
-        margin_percent: marginPercent,
-        sold_at: order.created_at ?? new Date().toISOString(),
-        shipment_label_url: order.shipment?.label_url ?? null,
+        margin_percent:  marginPercent,
+        sold_at:         order.created_at ?? new Date().toISOString(),
       }, { onConflict: 'vinted_order_id' })
 
-      await supabase.from('inventory_items').update({ status: 'sold' }).eq('id', listing.sku_id)
-      await supabase.from('listings').update({ status: 'sold' }).eq('id', listing.id)
+      if (listing?.sku_id) {
+        await supabase.from('inventory_items').update({ status: 'sold' }).eq('id', listing.sku_id)
+      }
+      break
+    }
+
+    case 'ITEM_SOLD': {
+      const id = String(event.item_id ?? event.data?.id)
+      if (id) await supabase.from('listings').update({ status: 'sold' }).eq('vinted_item_id', id)
+      break
+    }
+
+    case 'ITEM_DELETED': {
+      const id = String(event.item_id ?? event.data?.id)
+      if (id) await supabase.from('listings').update({ status: 'deleted' }).eq('vinted_item_id', id)
+      break
     }
   }
 

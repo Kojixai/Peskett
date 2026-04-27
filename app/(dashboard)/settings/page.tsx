@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/layout/theme-toggle'
+import { ApiConnections } from '@/components/settings/api-connections'
 import type { OfferRule } from '@/lib/types'
 
 export default function SettingsPage() {
@@ -172,28 +173,10 @@ export default function SettingsPage() {
         </div>
       </section>
 
-      {/* API status */}
+      {/* API Connections accordion */}
       <section className="space-y-4">
         <h2 className="text-sm text-[var(--text-2)] uppercase tracking-widest">API Connections</h2>
-        <div className="bg-[var(--bg-card)] border border-[var(--border)]">
-          {[
-            { label: 'Vinted Pro API', env: 'VINTED_PRO_ACCESS_KEY', required: true },
-            { label: 'Starling Bank API', env: 'STARLING_ACCESS_TOKEN', required: false },
-            { label: 'eBay API', env: 'EBAY_CLIENT_ID', required: false },
-            { label: 'Claude AI', env: 'ANTHROPIC_API_KEY', required: true },
-          ].map((item) => (
-            <div key={item.label} className="flex items-center justify-between px-4 py-3 border-b last:border-b-0 border-[var(--border)]">
-              <div>
-                <div className="text-sm text-[var(--text-2)]">{item.label}</div>
-                <div className="font-mono text-xs text-[var(--text-subtle)]">{item.env}</div>
-              </div>
-              <div className={`text-xs font-mono ${item.required ? 'text-amber-400' : 'text-[var(--text-subtle)]'}`}>
-                {item.required ? 'Required' : 'Optional'}
-              </div>
-            </div>
-          ))}
-        </div>
-        <p className="text-xs text-[var(--text-subtle)]">Configure API keys in your <code className="font-mono bg-[var(--bg-elevated)] px-1">.env.local</code> file.</p>
+        <ApiConnections />
       </section>
 
       {/* Changelog */}
@@ -223,6 +206,18 @@ export default function SettingsPage() {
 }
 
 const CHANGELOG = [
+  {
+    version: 'v0.7',
+    date: '27 Apr 2026 · 10:00',
+    changes: [
+      'All demo data removed — app now requires live Supabase + Vinted Pro connection',
+      'Full Vinted Pro Integrations (VPI) API client with HMAC-SHA256 request signing',
+      'Webhook endpoint /api/webhooks/vinted for real-time order sync',
+      'API Connections accordion in Settings — enter and save keys directly in the UI',
+      'Supabase app_config table stores API keys securely with RLS',
+      'Step-by-step setup instructions for Vinted Pro, Starling, eBay and Claude AI',
+    ],
+  },
   {
     version: 'v0.6',
     date: '26 Apr 2026 · 17:35',

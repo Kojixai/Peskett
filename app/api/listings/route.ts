@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { createVintedListing } from '@/lib/vinted'
+import { createVintedItems } from '@/lib/vinted'
 
 export async function GET() {
   const supabase = await createClient()
@@ -35,14 +35,16 @@ export async function POST(request: Request) {
   if (publish_mode === 'now') {
     // Attempt to publish to Vinted
     try {
-      const result = await createVintedListing({
+      const result = await createVintedItems([{
         title: `${item_details?.brand ?? ''} ${item_details?.description ?? ''}`.trim(),
         description: ai_description ?? '',
-        price: list_price,
+        price: Math.round(list_price * 100),
+        currency_code: 'GBP',
         category_id: 0, // Would map from item_details.category to Vinted ontology
         condition: item_details?.condition ?? 'good',
-      })
-      vinted_item_id = result?.item?.id ?? null
+        reference: sku_id ? String(sku_id) : undefined,
+      }])
+      vinted_item_id = result?.items?.[0]?.id ?? null
       status = 'live'
       listed_at = new Date().toISOString()
     } catch {
